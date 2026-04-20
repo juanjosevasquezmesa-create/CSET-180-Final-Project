@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+{% block body %}
+<style>
+  .account-page {
+    max-width: 860px;
+    margin: 48px auto 80px;
+    padding: 0 24px;
+    display: grid;
+    gap: 24px;
+  }
+
+  /* ── Page Title ── */
+  .account-page-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    color: var(--charcoal);
+  }
+  .account-page-title span {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--charcoal-lt);
+    margin-top: 4px;
+  }
+
+  /* ── Balance Hero Card ── */
+  .balance-card {
+    background: var(--charcoal);
+    color: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    box-shadow: 0 16px 48px var(--shadow-lg);
+    flex-wrap: wrap;
+  }
+
+  .balance-left {}
+  .balance-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(242,237,228,0.6);
+    margin-bottom: 10px;
+  }
+  .balance-amount {
+    font-family: var(--font-display);
+    font-size: clamp(38px, 7vw, 58px);
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1;
+  }
+  .balance-account-name {
+    margin-top: 10px;
+    font-size: 14px;
+    color: rgba(242,237,228,0.65);
+  }
+
+  .balance-right {
+    text-align: right;
+  }
+  .card-chip-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(242,237,228,0.55);
+    margin-bottom: 8px;
+  }
+  .card-number-display {
+    font-family: monospace;
+    font-size: 16px;
+    color: rgba(242,237,228,0.85);
+    letter-spacing: 0.12em;
+  }
+  .card-cvv-display {
+    font-size: 13px;
+    color: rgba(242,237,228,0.5);
+    margin-top: 6px;
+  }
+
+  /* ── Info + Actions Grid ── */
+  .account-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* ── Info Card ── */
+  .info-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px 26px;
+    box-shadow: 0 4px 16px var(--shadow);
+  }
+
+  .info-card-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-row-label { color: var(--charcoal-lt); font-weight: 600; }
+  .info-row-value { color: var(--charcoal); font-weight: 700; font-family: monospace; font-size: 13px; }
+
+  /* ── Action Buttons Card ── */
+  .actions-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px 26px;
+    box-shadow: 0 4px 16px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    justify-content: center;
+  }
+
+  .action-big-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .action-big-btn.send {
+    background: var(--charcoal);
+    color: var(--cream);
+    box-shadow: 0 6px 20px var(--shadow-lg);
+  }
+  .action-big-btn.send:hover { background: #3a3530; transform: translateY(-1px); }
+
+  .action-big-btn.add {
+    background: var(--cream);
+    color: var(--charcoal);
+    border: 2px solid var(--border);
+  }
+  .action-big-btn.add:hover { border-color: var(--charcoal); background: var(--cream-dark); }
+
+  .action-big-btn.statement {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .action-big-btn.statement:hover { border-color: var(--accent); }
+
+  /* ── Recent Transactions Preview ── */
+  .recent-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 16px var(--shadow);
+  }
+
+  .recent-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .recent-header h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--charcoal);
+  }
+  .recent-header a {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .txn-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .txn-row:last-child { border-bottom: none; }
+  .txn-row:hover { background: var(--cream); }
+
+  .txn-desc { font-size: 14px; font-weight: 600; color: var(--charcoal); }
+  .txn-date { font-size: 12px; color: var(--charcoal-lt); margin-top: 2px; }
+  .txn-type {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+  }
+  .txn-type.credit { background: #eef4f0; color: #3a6b4a; }
+  .txn-type.debit  { background: #f7eeee; color: #8b3a3a; }
+
+  .txn-amount { font-size: 15px; font-weight: 700; color: var(--charcoal); text-align: right; }
+  .txn-amount.credit { color: #3a6b4a; }
+  .txn-amount.debit  { color: #8b3a3a; }
+
+  @media (max-width: 700px) {
+    .account-grid { grid-template-columns: 1fr; }
+    .balance-card { padding: 28px 22px; }
+    .balance-right { text-align: left; }
+  }
+
+  @media (max-width: 480px) {
+    .account-page { margin: 24px auto 52px; padding: 0 16px; }
+    .balance-amount { font-size: 36px; }
+    .txn-row { grid-template-columns: 1fr auto; }
+    .txn-type { display: none; }
+  }
+</style>
+
+<div class="account-page">
+
+  <div>
+    <h1 class="account-page-title">
+      My Account
+      <span>Welcome back, {{ account.firstName }} {{ account.lastName }}</span>
+    </h1>
+  </div>
+
+  <!-- Balance Hero -->
+  <div class="balance-card">
+    <div class="balance-left">
+      <div class="balance-label">Current Balance</div>
+      <div class="balance-amount">${{ "{:,.2f}".format(account.balance) if account.balance else '0.00' }}</div>      
+      <div class="balance-account-name">{{ account.accountType if account.accountType else 'Checking Account' }}</div>
+    </div>
+  </div>
+
+  <!-- Info + Actions -->
+  <div class="account-grid">
+
+    <div class="info-card">
+      <div class="info-card-title">Account Details</div>
+      <div class="info-row">
+        <span class="info-row-label">Account Number</span>
+        <span class="info-row-value">{{ account.accountNumber if account.accountNumber else 'unavailable' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-label">Account Name</span>
+        <span class="info-row-value" style="font-family:var(--font-body);">{{ account.accountName if account.accountName else 'Checking' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-label">Email</span>
+        <span class="info-row-value" style="font-family:var(--font-body); font-size:12px;">{{ account.email }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-label">Status</span>
+         <span class="info-row-value" style="font-family:var(--font-body); color: {% if account.isVerified %}#3a6b4a{% else %}#7a5a1e{% endif %};">
+          {% if account.isVerified %}Verified{% else %}Pending Verification{% endif %}
+        </span>
+      </div>
+    </div>
+
+    <div class="actions-card">
+      <a href="/send" class="action-big-btn send">
+        ↗ Send Money
+      </a>
+      <a href="/add_money" class="action-big-btn add">
+        + Add Money
+      </a>
+      <a href="/statement" class="action-big-btn statement">
+        View Full Statement →
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="recent-card">
+    <div class="recent-header">
+      <h3>Recent Transactions</h3>
+      <a href="/statement">View all</a>
+    </div>
+
+    {% if transactions %}
+      {% for txn in transactions[:5] %}
+      <div class="txn-row">
+        <div>
+          <div class="txn-desc">{{ txn.otherAccount if txn.otherAccount else 'Transaction' }}</div>
+          <div class="txn-date">{{ txn.date.strftime('%b %d, %Y') if txn.date else '—' }}</div>
+        </div>
+        <span class="txn-type {{ 'credit' if txn.type == 'receive' else 'debit' }}">
+          {{ 'Received' if txn.type == 'receive' else 'Sent' }}
+        </span>
+        <div class="txn-amount {{ 'credit' if txn.type == 'receive' else 'debit' }}">
+          {{ '+' if txn.type == 'receive' else '-' }}${{ "{:,.2f}".format(txn.amount) }}
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div style="padding: 40px 24px; text-align:center; color:var(--charcoal-lt); font-size:14px;">
+        No transactions yet. Send or add money to get started.
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

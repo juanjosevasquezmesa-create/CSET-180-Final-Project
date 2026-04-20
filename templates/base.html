@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlueWave Bank</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── CSS Variables ── */
+    :root {
+      --cream:        #f2ede4;
+      --cream-dark:   #e8e1d6;
+      --charcoal:     #4a4540;
+      --charcoal-lt:  #6b6259;
+      --border:       #ddd8cf;
+      --accent:       #8c7b6e;
+      --white:        #ffffff;
+      --shadow:       rgba(74, 69, 64, 0.12);
+      --shadow-lg:    rgba(74, 69, 64, 0.20);
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body:    'Lato', 'Helvetica Neue', Arial, sans-serif;
+      --radius-sm:    10px;
+      --radius-md:    18px;
+      --radius-lg:    26px;
+      --radius-pill:  999px;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background-color: var(--cream);
+      color: var(--charcoal);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Header ── */
+    .site-header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 16px var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 28px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* ── Logo ── */
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--charcoal);
+      color: var(--cream);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .logo-icon svg { width: 24px; height: 24px; }
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--charcoal);
+    }
+
+    /* ── Nav ── */
+    .site-nav { display: flex; align-items: center; gap: 24px; }
+
+    .nav-link {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--charcoal-lt);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--charcoal); }
+
+    .nav-btn, .nav-btn-outline {
+      display: inline-flex;
+      align-items: center;
+      height: 38px;
+      padding: 0 18px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .nav-btn {
+      background: var(--charcoal);
+      color: var(--cream);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+    .nav-btn:hover { background: #3a3530; }
+
+    .nav-btn-outline {
+      background: transparent;
+      color: var(--charcoal);
+      border: 2px solid var(--border);
+    }
+    .nav-btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Main ── */
+    .site-main { flex: 1; }
+
+    /* ── Footer ── */
+    .site-footer {
+      background: var(--charcoal);
+      color: var(--cream);
+      padding: 40px 28px;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px 40px;
+      align-items: start;
+    }
+    .footer-brand .logo-text { color: var(--cream); font-size: 17px; }
+    .footer-brand p { margin-top: 6px; font-size: 13px; color: rgba(242,237,228,0.6); }
+    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: flex-end; }
+    .footer-links a { font-size: 13px; color: rgba(242,237,228,0.65); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--cream); }
+    .footer-copy {
+      grid-column: 1 / -1;
+      font-size: 12px;
+      color: rgba(242,237,228,0.35);
+      border-top: 1px solid rgba(242,237,228,0.1);
+      padding-top: 16px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 640px) {
+      .header-inner { padding: 0 18px; }
+      .logo-text { font-size: 17px; }
+      .site-nav { gap: 12px; }
+      .nav-link { display: none; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .footer-links { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo-link">
+        <div class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="currentColor">
+            <polygon points="20,4 4,13 36,13"/>
+            <rect x="7" y="15" width="4" height="13"/>
+            <rect x="14" y="15" width="4" height="13"/>
+            <rect x="22" y="15" width="4" height="13"/>
+            <rect x="29" y="15" width="4" height="13"/>
+            <rect x="5" y="29" width="30" height="4"/>
+          </svg>
+        </div>
+        <span class="logo-text">BlueWave Bank</span>
+      </a>
+
+      <nav class="site-nav">
+        {% if session.get('userID') %}
+          <a href="/account/{{ session.get('userID') }}" class="nav-link">My Account</a>
+          <a href="/send" class="nav-link">Send</a>
+          <a href="/add_money" class="nav-link">Add Money</a>
+          <a href="/statement" class="nav-link">Statement</a>
+          {% if session.get('isAdmin') %}
+            <a href="/accounts" class="nav-btn" style="background:var(--accent);">All Accounts</a>
+            <a href="/admin/transactions" class="nav-btn" style="background:var(--accent);">All Transactions</a>
+          {% endif %}
+          <form method="POST" action="/logout" style="display:inline;">
+            <button type="submit" class="nav-btn-outline">Logout</button>
+          </form>
+        {% else %}
+          <a href="/login" class="nav-link">Login</a>
+          <a href="/signup" class="nav-btn">Open Account</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+    {% block body %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo-text">BlueWave Bank</div>
+        <p>Trusted banking, rooted in tradition.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Contact</a>
+      </div>
+      <p class="footer-copy">&copy; 2025 BlueWave Bank.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+{% block body %}
+<style>
+  .send-page {
+    width: min(980px, calc(100% - 32px));
+    margin: 48px auto 80px;
+    display: grid;
+    grid-template-columns: minmax(280px, 1.1fr) minmax(300px, 0.9fr);
+    gap: 28px;
+    align-items: start;
+  }
+
+  /* ── Left Hero Panel ── */
+  .send-hero {
+    background: var(--charcoal);
+    color: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    border: 1px solid var(--border);
+    box-shadow: 0 18px 48px var(--shadow-lg);
+    position: sticky;
+    top: 94px;
+  }
+
+  .send-badge {
+    display: inline-flex;
+    width: fit-content;
+    padding: 7px 16px;
+    border-radius: var(--radius-pill);
+    background: rgba(242,237,228,0.10);
+    border: 1px solid rgba(242,237,228,0.18);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: rgba(242,237,228,0.78);
+    margin-bottom: 22px;
+  }
+
+  .send-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 3.5vw, 38px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--cream);
+    margin-bottom: 14px;
+  }
+
+  .send-hero p {
+    font-size: 14px;
+    color: rgba(242,237,228,0.68);
+    line-height: 1.7;
+  }
+
+  .send-balance-preview {
+    margin-top: 32px;
+    padding: 18px 20px;
+    background: rgba(242,237,228,0.08);
+    border: 1px solid rgba(242,237,228,0.12);
+    border-radius: var(--radius-md);
+  }
+  .send-balance-preview .lbl {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(242,237,228,0.5);
+    margin-bottom: 6px;
+  }
+  .send-balance-preview .amt {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--cream);
+  }
+
+  /* ── Right Form Card ── */
+  .send-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    box-shadow: 0 18px 48px var(--shadow-lg);
+  }
+
+  .send-card h2 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+  .send-card-text {
+    font-size: 14px;
+    color: var(--charcoal-lt);
+    margin-bottom: 28px;
+  }
+
+  .send-form { display: grid; gap: 18px; }
+
+  .send-field { display: flex; flex-direction: column; gap: 8px; }
+
+  .send-form label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+  }
+
+  .send-form select,
+  .send-form input,
+  .send-form textarea {
+    padding: 0 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--charcoal);
+    font-family: var(--font-body);
+    font-size: 15px;
+    box-shadow: 0 2px 8px var(--shadow);
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .send-form select,
+  .send-form input { height: 50px; }
+
+  .send-form textarea {
+    height: 100px;
+    padding: 14px 16px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .send-form select:focus,
+  .send-form input:focus,
+  .send-form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(140,123,110,0.18);
+  }
+
+  .send-form input::placeholder,
+  .send-form textarea::placeholder { color: #b5ada5; }
+
+  /* Amount field with $ prefix */
+  .amount-wrap {
+    position: relative;
+  }
+  .amount-wrap .dollar {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--charcoal-lt);
+    pointer-events: none;
+  }
+  .amount-wrap input {
+    padding-left: 32px;
+  }
+
+  .optional-tag {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--accent);
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: 6px;
+  }
+
+  .send-form button {
+    margin-top: 4px;
+    height: 54px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--charcoal);
+    color: var(--cream);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 6px 20px var(--shadow-lg);
+    transition: all 0.2s;
+  }
+  .send-form button:hover {
+    background: #3a3530;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px var(--shadow-lg);
+  }
+
+  .status-message {
+    margin: 0 0 20px;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .status-message.error { background:#f7eeee; color:#8b3a3a; border:1px solid #d9b8b8; }
+  .status-message.success { background:#eef4f0; color:#3a6b4a; border:1px solid #b8d4c0; }
+
+  @media (max-width: 900px) {
+    .send-page {
+      grid-template-columns: 1fr;
+      width: min(calc(100% - 24px), 520px);
+      margin: 28px auto 52px;
+    }
+    .send-hero { position: static; padding: 28px 24px; }
+    .send-card { padding: 28px 24px; }
+  }
+
+  @media (max-width: 480px) {
+    .send-page { width: calc(100% - 16px); margin: 16px auto 36px; }
+    .send-hero { padding: 22px 18px; }
+    .send-card { padding: 22px 18px; }
+  }
+</style>
+
+<section class="send-page">
+
+  <!-- Left hero -->
+  <div class="send-hero">
+    <span class="send-badge">Send Money</span>
+    <h1>Transfer funds instantly.</h1>
+    <p>Send money to any BlueWave account holder. Transfers are processed immediately and reflected in both balances.</p>
+    <div class="send-balance-preview">
+      <div class="lbl">Your Balance</div>
+      <div class="amt">${{ "{:,.2f}".format(account.balance) if account and account.balance is not none else '0.00' }}</div>
+    </div>
+  </div>
+
+  <!-- Right form -->
+  <div class="send-card">
+    <h2>Send Money</h2>
+    <p class="send-card-text">Choose a recipient and enter an amount.</p>
+
+    {% if error %}
+      <div class="status-message error">{{ error }}</div>
+    {% endif %}
+    {% if success %}
+      <div class="status-message success">{{ success }}</div>
+    {% endif %}
+
+    <form class="send-form" method="POST" action="/send">
+
+      <div class="send-field">
+        <label for="recipient">Select Account to Send To</label>
+        <select id="recipient" name="recipient_id" required>
+          <option value="" disabled selected>— Choose a recipient —</option>
+          {% for user in users %}
+            <option value="{{ user.userID }}">{{ user.firstName }} {{ user.lastName }} ({{ user.email }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="send-field">
+        <label for="amount">Amount</label>
+        <div class="amount-wrap">
+          <span class="dollar">$</span>
+          <input id="amount" type="number" name="amount" min="0.01" step="0.01" placeholder="0.00" required>
+        </div>
+      </div>
+
+      <div class="send-field">
+        <label for="message">
+          Message
+          <span class="optional-tag">(optional)</span>
+        </label>
+        <textarea id="message" name="message" placeholder="Add a note..."></textarea>
+      </div>
+
+      <button type="submit">↗ Send Money</button>
+    </form>
+  </div>
+
+</section>
+{% endblock %}
