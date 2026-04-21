@@ -50,3 +50,5 @@ with Session(engine) as event:
 @app.route('/')
 def index():
     return render_template('index.html', session=session)
+
+print("Hello World")
