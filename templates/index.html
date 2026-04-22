@@ -1,4 +1,74 @@
 {% extends "base.html" %}
-{% block body %}
 
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+{% endblock %}
+
+{% block body %}
+    <header class="header">
+        <nav class="nav">
+            <a class="logo" href="{{ url_for('index') }}#home">Lux Auto</a>
+            <div class="links">
+                <a href="{{ url_for('index') }}#home">Home</a>
+                <a href="#browse-cars">Browse Cars</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="nav-btns">
+                <a class="cta" href="{{ url_for('index') }}#home">Log In</a>
+                <a class="cta" href="#sign-up">Sign Up</a>
+            </div>
+        </nav>
+    </header>
+
+    <main id="home">
+        <section class="hero">
+            <video
+                id="video"
+                class="video"
+                muted
+                playsinline
+                preload="auto"
+            >
+                <source src="{{ url_for('static', filename='videos/1.1-invideo-veo_3_fast.mp4') }}" type="video/mp4">
+            </video>
+            <div class="overlay"></div>
+            <div class="content">
+                <p class="tag">Private Luxury Automotive Sales</p>
+                <h1>Drive a statement, not just a car.</h1>
+                <p class="text">
+                    Discover handpicked supercars and rare collector vehicles
+                    presented to you through a top of the line buying experience.
+                </p>
+                <div class="actions">
+                    <a class="btn main-btn" href="#browse-cars">Browse Cars</a>
+                    <a class="btn alt-btn" href="#contact">Contact Us</a>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        window.addEventListener("load", () => {
+            const heroVideo = document.getElementById("video");
+
+            if (!heroVideo) {
+                return;
+            }
+
+            heroVideo.loop = false;
+            heroVideo.currentTime = 0;
+            const playPromise = heroVideo.play();
+
+            if (playPromise && typeof playPromise.catch === "function") {
+                playPromise.catch(() => {
+                });
+            }
+
+            heroVideo.addEventListener("ended", () => {
+                heroVideo.pause();
+            }, { once: true });
+        });
+    </script>
 {% endblock %}
