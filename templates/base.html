@@ -12,7 +12,7 @@
 <body>
     <header class="header">
         <nav class="nav">
-            <a class="logo" href="{{ url_for('index') }}#home">Lux Auto</a>
+            <a class="logo" href="{{ url_for('index.index') }}#home">Lux Auto</a>
             <button
                 class="menu-toggle"
                 type="button"
@@ -26,13 +26,13 @@
             </button>
             <div class="nav-panel" id="mobile-menu">
                 <div class="links">
-                    <a href="{{ url_for('index') }}#home">Home</a>
+                    <a href="{{ url_for('index.index') }}#home">Home</a>
                     <a href="#browse-cars">Browse Cars</a>
-                    <a href="{{ url_for('index') }}#contact">Contact</a>
+                    <a href="{{ url_for('index.index') }}#contact">Contact</a>
                 </div>
                 <div class="nav-btns">
-                    <a class="cta" href="">Log In</a>
-                    <a class="cta" href="">Sign Up</a>
+                    <a class="cta" href="/login">Log In</a>
+                    <a class="cta" href="/signup">Sign Up</a>
                 </div>
             </div>
         </nav>

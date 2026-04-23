@@ -1,11 +1,10 @@
-from flask import Flask, abort, render_template, request, redirect, url_for, jsonify
-from math import ceil
-from sqlalchemy import Column, Integer, String, Numeric, create_engine, text, select, Identity, ForeignKey, Date, DateTime
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session, relationship
+from flask import Flask
 from datetime import timedelta
-from flask import session #A Flask session can persist between visits if the browser still has the session cookie and it has not expired. (A session in Flask is a way to remember information about one specific user across multiple requests.)
-import datetime
-import random
+
+from backend.config import FLASK_SECRET_KEY
+from backend.index import index_bp
+from backend.login import login_bp
+from backend.signup import signup_bp
 
 app = Flask(__name__)
 # Now you can access variables like this:
@@ -14,42 +13,11 @@ app = Flask(__name__)
 
 app.permanent_session_lifetime = timedelta(days=7)# It enables session persistence beyond closing the browser, with a default lifespan of 31 days. If inactive, the session cookie expires, forcing user re-authentication.
 
-conn_temp = create_engine("mysql://root:cset155@localhost") # This connects to MySQL server only without opening a database
+app.config["SECRET_KEY"] = FLASK_SECRET_KEY
 
-with conn_temp.connect() as conn:
-    conn.execute(text("CREATE DATABASE IF NOT EXISTS MARKETDB"))
-    conn.commit()
-
-conn_str = "mysql://root:cset155@localhost/MARKETDB"
-engine = create_engine(conn_str, echo=True)
-
-class Base(DeclarativeBase):
-    pass
-
-# This will require changes
-class User(Base): # this is using the Base class that originates from the DeclarativeBase that is used to create the format of a table 
-    __tablename__ = "users" # this is the name of the table 
-    userID:    Mapped[int] = mapped_column(Integer, Identity(start=1), primary_key=True, autoincrement=True) #  refers to the SQL Server IDENTITY syntax, where the two integers represent the seed (starting value) and the increment (step value).
-    firstName:  Mapped[str] = mapped_column(String(50), nullable=True)
-    lastName:  Mapped[str] = mapped_column(String(50), nullable=True)
-    phoneNumber: Mapped[str] = mapped_column(String(20),unique=True, nullable=True)
-    email: Mapped[str] = mapped_column(String(100), unique=True)
-    username: Mapped[str] = mapped_column(String(75), unique=True)
-    password: Mapped[str] = mapped_column(String(100), nullable=True)
-    isAdmin: Mapped[bool] = mapped_column(default=False)
-
-Base.metadata.create_all(engine)
-
-with Session(engine) as event:
-    exists = event.scalars(select(User).where(User.email == "admin@tsct.com")).first()
-    
-    if not exists:
-        event.add(User(firstName='Admin', username="admin", email="admin@tsct.com", password="adminPW", isAdmin=1))
-        event.commit()
-        
-@app.route('/')
-def index():
-    return render_template('index.html')
+app.register_blueprint(index_bp)
+app.register_blueprint(login_bp)
+app.register_blueprint(signup_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
