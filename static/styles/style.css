@@ -46,6 +46,7 @@ a {
     border-radius: 999px;
     background: rgba(12, 12, 11, 0.58);
     backdrop-filter: blur(16px);
+
 }
 
 .menu-backdrop {
@@ -209,6 +210,7 @@ a {
     width: 100%;
     max-width: 1420px;
     margin: 0 auto;
+    animation: fadeInUp 4.5s ease both;
 }
 
 .tag {
@@ -240,6 +242,30 @@ a {
     gap: 16px;
     margin-top: 30px;
     flex-wrap: wrap;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (min-width: 1440px) {

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/login_signup.css') }}">
+{% endblock %}
+
+{% block body %}
+    <main class="auth-page">
+        <section class="auth-shell">
+            <div class="auth-intro">
+                <p class="eyebrow">Create Profile</p>
+                <h1>Start your luxury buying account.</h1>
+                <p class="intro-copy">
+                    Join Lux Auto to unlock rare inventory previews, direct inquiry access,
+                    and a more tailored experience across every visit.
+                </p>
+                <div class="intro-points">
+                    <span>Exclusive inventory</span>
+                    <span>Faster checkout</span>
+                    <span>Personalized service</span>
+                </div>
+            </div>
+
+            <div class="auth-card signup-container">
+                <p class="card-kicker">Register</p>
+                <h2>Create Your Account</h2>
+                <form class="auth-form" method="POST" action="{{ url_for('signup') }}">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Create a password" required>
+                    </div>
+                    <button type="submit" class="btn auth-submit">Sign Up</button>
+                </form>
+                {% if error %}
+                    <p class="error-message">{{ error }}</p>
+                {% endif %}
+                <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+            </div>
+        </section>
+    </main>
+{% endblock %}

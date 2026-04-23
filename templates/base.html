@@ -10,6 +10,34 @@
     {% block styles %}{% endblock %}
 </head>
 <body>
+    <header class="header">
+        <nav class="nav">
+            <a class="logo" href="{{ url_for('index') }}#home">Lux Auto</a>
+            <button
+                class="menu-toggle"
+                type="button"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="mobile-menu"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-panel" id="mobile-menu">
+                <div class="links">
+                    <a href="{{ url_for('index') }}#home">Home</a>
+                    <a href="#browse-cars">Browse Cars</a>
+                    <a href="{{ url_for('index') }}#contact">Contact</a>
+                </div>
+                <div class="nav-btns">
+                    <a class="cta" href="">Log In</a>
+                    <a class="cta" href="">Sign Up</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <button class="menu-backdrop" type="button" aria-label="Close navigation menu"></button>
     {% block body %}{% endblock %}
     {% block scripts %}{% endblock %}
 </body>
