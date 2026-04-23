@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/login_signup.css') }}">
+{% endblock %}
+
+{% block body %}
+    <main class="auth-page">
+        <section class="auth-shell">
+            <div class="auth-intro">
+                <p class="eyebrow">Member Access</p>
+                <h1>Welcome back to Lux Auto.</h1>
+                <p class="intro-copy">
+                    Step back into your private showroom to review exclusive inventory,
+                    save favorites, and continue your buying experience.
+                </p>
+                <div class="intro-points">
+                    <span>Priority listings</span>
+                    <span>Saved vehicles</span>
+                    <span>Private contact</span>
+                </div>
+            </div>
+
+            <div class="auth-card login-container">
+                <p class="card-kicker">Sign In</p>
+                <h2>Login to Your Account</h2>
+                <form class="auth-form" method="POST" action="{{ url_for('login') }}">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn auth-submit">Login</button>
+                </form>
+                {% if error %}
+                    <p class="error-message">{{ error }}</p>
+                {% endif %}
+                <p class="auth-switch">Don't have an account? <a href="{{ url_for('signup') }}">Sign Up</a></p>
+            </div>
+        </section>
+    </main>
+{% endblock %}
