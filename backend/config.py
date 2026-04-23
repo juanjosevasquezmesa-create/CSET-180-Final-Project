@@ -1,0 +1,48 @@
+import os
+from pathlib import Path
+from urllib.parse import quote_plus
+
+
+def load_env_file(env_path: str = ".env") -> None:
+    path = Path(env_path)
+    if not path.exists():
+        return
+
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+
+        if key:
+            os.environ.setdefault(key, value)
+
+
+load_env_file()
+
+
+def env_flag(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = os.getenv("DB_PORT", "3306")
+DB_USER = os.getenv("DB_USER", "root")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "cset155")
+DB_NAME = os.getenv("DB_NAME", "luxemotordb")
+DB_ECHO = env_flag("DB_ECHO", True)
+DB_CREATE_DATABASE = env_flag("DB_CREATE_DATABASE", True)
+
+FLASK_SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "change-me")
+
+_encoded_password = quote_plus(DB_PASSWORD)
+_db_host_port = f"{DB_HOST}:{DB_PORT}" if DB_PORT else DB_HOST
+
+MYSQL_SERVER_URL = f"mysql://{DB_USER}:{_encoded_password}@{_db_host_port}"
+DATABASE_URL = f"{MYSQL_SERVER_URL}/{DB_NAME}"
