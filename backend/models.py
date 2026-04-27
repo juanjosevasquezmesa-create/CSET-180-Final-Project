@@ -14,7 +14,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, relationship
 from werkzeug.security import generate_password_hash
 
-from backend.config import DATABASE_URL, DB_CREATE_DATABASE, DB_ECHO, DB_NAME, MYSQL_SERVER_URL
+from .config import DATABASE_URL, DB_CREATE_DATABASE, DB_ECHO, DB_NAME, MYSQL_SERVER_URL
 
 conn_temp = create_engine(MYSQL_SERVER_URL)
 

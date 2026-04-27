@@ -3,8 +3,8 @@ from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 from werkzeug.security import generate_password_hash
 
-from backend.models import User, engine
-from main import flash_message
+from .models import User, engine
+from .config import flash_message
 
 
 signup_bp = Blueprint("signup", __name__, url_prefix="/signup")

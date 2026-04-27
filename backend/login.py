@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, session, url_fo
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from backend.models import User, engine
+from .models import User, engine
 from werkzeug.security import check_password_hash
 
 login_bp = Blueprint("login", __name__, url_prefix="/login")
@@ -24,6 +24,7 @@ def login():
         if user and check_password_hash(user.password, password):
             session.permanent = True
             session["user_id"] = user.userID
+            session["name"] = user.name
             session["username"] = user.username
             return redirect(url_for("index.index"))
 
