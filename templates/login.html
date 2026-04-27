@@ -2,6 +2,8 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/login_signup.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+
 {% endblock %}
 
 {% block body %}
@@ -24,7 +26,7 @@
             <div class="auth-card login-container">
                 <p class="card-kicker">Sign In</p>
                 <h2>Login to Your Account</h2>
-                <form class="auth-form" method="POST" action="{{ url_for('login') }}">
+                <form class="auth-form" method="POST" action="{{ url_for('login.login') }}">
                     <div class="form-group">
                         <label for="username">Username</label>
                         <input type="text" id="username" name="username" placeholder="Enter your username" required>
@@ -38,7 +40,7 @@
                 {% if error %}
                     <p class="error-message">{{ error }}</p>
                 {% endif %}
-                <p class="auth-switch">Don't have an account? <a href="{{ url_for('signup') }}">Sign Up</a></p>
+                <p class="auth-switch">Don't have an account? <a href="{{ url_for('signup.signup') }}">Sign Up</a></p>
             </div>
         </section>
     </main>
