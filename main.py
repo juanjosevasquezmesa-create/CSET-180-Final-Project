@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, flash
 from datetime import timedelta
 
 from backend.config import FLASK_SECRET_KEY
@@ -21,3 +21,14 @@ app.register_blueprint(signup_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+# Utility function to flash messages from anywhere
+def flash_message(message, category="info"):
+    """
+    Flash a message with a category (success, error, info, etc.)
+    Usage (in other files):
+        from main import flash_message
+        flash_message("Your message", "success")
+    """
+    flash(message, category)

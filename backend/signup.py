@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from werkzeug.security import generate_password_hash
 
 from backend.models import User, engine
+from main import flash_message
 
 
 signup_bp = Blueprint("signup", __name__, url_prefix="/signup")
@@ -11,15 +12,15 @@ signup_bp = Blueprint("signup", __name__, url_prefix="/signup")
 
 @signup_bp.route("/", methods=["GET", "POST"])
 def signup():
-    error = None
-
     if request.method == "POST":
+        name = request.form.get('Name', "").strip()
         username = request.form.get("username", "").strip()
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "")
 
-        if not username or not email or not password:
-            error = "All fields are required."
+
+        if not username or not email or not password or not name:
+            flash_message("All fields are required.", "error")
         else:
             with Session(engine) as session_db:
                 existing_user = session_db.scalars(
@@ -29,16 +30,18 @@ def signup():
                 ).first()
 
                 if existing_user:
-                    error = "That username or email is already in use."
+                    flash_message("That username or email is already in use.", "error")
                 else:
                     session_db.add(
                         User(
+                            name=name,
                             username=username,
                             email=email,
                             password=generate_password_hash(password),
                         )
                     )
                     session_db.commit()
+                    flash_message("Signup successful! Please log in.", "success")
                     return redirect(url_for("login.login"))
 
-    return render_template("signup.html", error=error)
+    return render_template("signup.html")
