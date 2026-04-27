@@ -1,10 +1,11 @@
-from flask import Flask, flash
+from flask import Flask
 from datetime import timedelta
 
 from backend.config import FLASK_SECRET_KEY
 from backend.index import index_bp
 from backend.login import login_bp
 from backend.signup import signup_bp
+from backend.logout import logout_bp
 
 app = Flask(__name__)
 # Now you can access variables like this:
@@ -18,17 +19,9 @@ app.config["SECRET_KEY"] = FLASK_SECRET_KEY
 app.register_blueprint(index_bp)
 app.register_blueprint(login_bp)
 app.register_blueprint(signup_bp)
+app.register_blueprint(logout_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
 
 
-# Utility function to flash messages from anywhere
-def flash_message(message, category="info"):
-    """
-    Flash a message with a category (success, error, info, etc.)
-    Usage (in other files):
-        from main import flash_message
-        flash_message("Your message", "success")
-    """
-    flash(message, category)

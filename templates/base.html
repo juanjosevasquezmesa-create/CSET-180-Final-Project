@@ -30,10 +30,17 @@
                     <a href="#browse-cars">Browse Cars</a>
                     <a href="{{ url_for('index.index') }}#contact">Contact</a>
                 </div>
-                <div class="nav-btns">
-                    <a class="cta" href="/login">Log In</a>
-                    <a class="cta" href="/signup">Sign Up</a>
-                </div>
+                {% if session %}
+                    <div class="nav-btns">
+                        <a class="cta" href="/logout">Log Out</a>
+                    </div>
+                {% else %}
+                    <div class="nav-btns">
+                        <a class="cta" href="/login">Log In</a>
+                        <a class="cta" href="/signup">Sign Up</a>
+                    </div>
+                {% endif %}
+                
             </div>
         </nav>
     </header>
