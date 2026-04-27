@@ -13,7 +13,7 @@ signup_bp = Blueprint("signup", __name__, url_prefix="/signup")
 @signup_bp.route("/", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        name = request.form.get('Name', "").strip()
+        name = request.form.get('name', "").strip()
         username = request.form.get("username", "").strip()
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "")
