@@ -25,7 +25,7 @@ def login():
             session.permanent = True
             session["user_id"] = user.userID
             session["username"] = user.username
-            return redirect(url_for("home.index"))
+            return redirect(url_for("index.index"))
 
         error = "Invalid username or password."
 
