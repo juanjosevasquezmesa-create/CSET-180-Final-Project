@@ -25,6 +25,7 @@ def signup():
             with Session(engine) as session_db:
                 existing_user = session_db.scalars(
                     select(User).where(
+                        # this acts like an or statement whereever the , is
                         or_(User.username == username, User.email == email)
                     )
                 ).first()

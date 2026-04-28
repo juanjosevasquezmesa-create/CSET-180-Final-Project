@@ -26,8 +26,9 @@ def load_env_file(env_path: str = ".env") -> None:
 load_env_file()
 
 
+
 def env_flag(name: str, default: bool) -> bool:
-    value = (name)
+    value = os.environ.get(name)
     if value is None:
         return default
     return value.strip().lower() in {"1", "true", "yes", "on"}

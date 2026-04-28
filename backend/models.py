@@ -14,14 +14,19 @@ from sqlalchemy import (
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, relationship
 from werkzeug.security import generate_password_hash
 
+
+# --- Ensure database exists before proceeding ---
 from .config import DATABASE_URL, DB_CREATE_DATABASE, DB_ECHO, DB_NAME, MYSQL_SERVER_URL
 
-conn_temp = create_engine(MYSQL_SERVER_URL)
+def ensure_database_exists():
+    if DB_CREATE_DATABASE:
+        temp_engine = create_engine(MYSQL_SERVER_URL)
+        with temp_engine.connect() as conn:
+            conn.execute(text(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}"))
+            conn.commit()
+        temp_engine.dispose()
 
-if DB_CREATE_DATABASE:
-    with conn_temp.connect() as conn:
-        conn.execute(text(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}"))
-        conn.commit()
+ensure_database_exists()
 
 engine = create_engine(DATABASE_URL, echo=DB_ECHO)
 
@@ -373,9 +378,9 @@ class Message(Base):
 
 Base.metadata.create_all(engine)
 
+
 with Session(engine) as event:
     exists = event.scalars(select(User).where(User.email == "admin@tsct.com")).first()
-
     if not exists:
         event.add(
             User(
