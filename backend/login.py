@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, session, url_fo
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+# we use .fileName to tell the file that we are calling a file from the same folder
 from .models import User, engine
 from werkzeug.security import check_password_hash
 
