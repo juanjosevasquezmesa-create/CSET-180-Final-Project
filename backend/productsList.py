@@ -1,28 +1,25 @@
-from flask import Blueprint, render_template, redirect, request, url_for
-from sqlalchemy import or_, select
+from flask import Blueprint, render_template, session
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.orm import Session
-from werkzeug.security import generate_password_hash
 
-from .models import User, Product, engine
-from .config import flash_message
+from .models import Product, engine
 
 
-productList_bp = Blueprint("productList", __name__, url_prefix="/signup")
+productList_bp = Blueprint("productList", __name__, url_prefix="/products")
 
 
 @productList_bp.route("/", methods=["GET"])
-def signup():
-
+def products():
     with Session(engine) as session_db:
-        existing_user = session_db.scalars(
-            select(User.name).where(User.user_id == Product.vendor_id)
-                
-        ).first()
+        products = session_db.scalars(
+            select(Product)
+            .options(
+                selectinload(Product.vendor),
+                selectinload(Product.images),
+                selectinload(Product.variations),
+            )
+            .order_by(Product.product_id)
+        ).all()
 
-        if existing_user:
-            flash_message("That username or email is already in use.", "error")
-        else:
-            flash_message("Signup successful! Please log in.", "success")
-            return redirect(url_for("login.login"))
-
-    return render_template("signup.html")
+    return render_template("products.html", products=products, session=session)
