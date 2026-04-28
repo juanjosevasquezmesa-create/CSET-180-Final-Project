@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/products.css') }}">
+{% endblock %}
+
+{% block title %}Browse Cars | Lux Auto{% endblock %}
+
+{% block body %}
+    <main class="products-page">
+       
+
+        <section class="products-list" aria-label="Cars for sale">
+            {% if products %}
+                {% for car in products %}
+                    <article class="car-card">
+                        <div class="car-media">
+                            {% set image = car.images|first if car.images is defined else none %}
+                            {% if image and image.img_url is defined and image.img_url %}
+                                <img src="{{ image.img_url }}" alt="{{ car.model }}">
+                            {% elif image and image.image_url is defined and image.image_url %}
+                                <img src="{{ image.image_url }}" alt="{{ car.model }}">
+                            {% else %}
+                                <div class="car-placeholder" aria-hidden="true"></div>
+                            {% endif %}
+                            <div class="car-name">
+                                <p>Model</p>
+                                <h2>{{ car.model }}</h2>
+                            </div>
+                        </div>
+
+                        <div class="car-details">
+                            <div class="detail-topline">
+                                <span class="price">${{ "{:,.2f}".format(car.price) }}</span>
+                                {% if car.vendor is defined and car.vendor %}
+                                    <span class="vendor">{{ car.vendor.name }}</span>
+                                {% endif %}
+                            </div>
+
+                            {% if car.description %}
+                                <p class="description">{{ car.description }}</p>
+                            {% endif %}
+
+                            <dl class="spec-grid">
+                                <div>
+                                    <dt>Warranty</dt>
+                                    <dd>{{ car.warranty_period or "Contact vendor" }}</dd>
+                                </div>
+                                <div>
+                                    <dt>Product ID</dt>
+                                    <dd>#{{ car.product_id }}</dd>
+                                </div>
+                            </dl>
+
+                            {% if car.variations is defined and car.variations %}
+                                <div class="variants">
+                                    <h3>Available Options</h3>
+                                    <div class="variant-list">
+                                        {% for variant in car.variations %}
+                                            <span class="variant-chip">
+                                                {{ variant.year }} {{ variant.color }}
+                                                <strong>{{ variant.stock }} in stock</strong>
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <h2>No cars listed yet</h2>
+                    <p>Once vehicles are added to the database, they will appear here.</p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        window.addEventListener("load", () => {
+            const menuToggle = document.querySelector(".menu-toggle");
+            const navPanel = document.querySelector(".nav-panel");
+            const menuBackdrop = document.querySelector(".menu-backdrop");
+
+            if (!menuToggle || !navPanel) {
+                return;
+            }
+
+            const closeMenu = () => {
+                menuToggle.setAttribute("aria-expanded", "false");
+                navPanel.classList.remove("is-open");
+                document.body.classList.remove("menu-open");
+            };
+
+            menuToggle.addEventListener("click", () => {
+                const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
+                menuToggle.setAttribute("aria-expanded", String(!isOpen));
+                navPanel.classList.toggle("is-open", !isOpen);
+                document.body.classList.toggle("menu-open", !isOpen);
+            });
+
+            navPanel.querySelectorAll("a").forEach((link) => {
+                link.addEventListener("click", closeMenu);
+            });
+
+            if (menuBackdrop) {
+                menuBackdrop.addEventListener("click", closeMenu);
+            }
+
+            window.addEventListener("resize", () => {
+                if (window.innerWidth > 640) {
+                    closeMenu();
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
