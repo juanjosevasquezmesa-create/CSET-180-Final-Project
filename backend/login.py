@@ -12,6 +12,7 @@ login_bp = Blueprint("login", __name__, url_prefix="/login")
 @login_bp.route("/", methods=["GET", "POST"])
 def login():
     error = None
+    # add logic to prevent non-verified vendors from loggin in
 
     if request.method == "POST":
         username = request.form.get("username")
