@@ -48,16 +48,19 @@ class User(Base):
     role: Mapped[str] = mapped_column(
         Enum("admin", "vendor", "customer", name="user_role"),
         nullable=False,
-        default="customer",
+        default="customer"
     )
-
+    isVerified: Mapped[str] = mapped_column (Enum("pending", "verified"),
+                                                nullable=False,
+                                                default="verified")
+    
     vendor_products: Mapped[list["Product"]] = relationship(
         foreign_keys="Product.vendor_id",
-        back_populates="vendor",
+        back_populates="vendor"
     )
     created_products: Mapped[list["Product"]] = relationship(
         foreign_keys="Product.created_by",
-        back_populates="creator",
+        back_populates="creator"
     )
     cart_items: Mapped[list["CartItem"]] = relationship(back_populates="customer")
     orders: Mapped[list["Order"]] = relationship(back_populates="customer")

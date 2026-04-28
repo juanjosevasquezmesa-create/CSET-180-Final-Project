@@ -17,7 +17,7 @@ def signup():
         existing_user = session_db.scalars(
             select(User.name).where(User.user_id == Product.vendor_id)
                 
-        ).first()
+        ).all()
 
         if existing_user:
             flash_message("That username or email is already in use.", "error")
