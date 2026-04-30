@@ -1,10 +1,52 @@
-from flask import Blueprint, session, jsonify
+from flask import Blueprint, request, session, jsonify
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from .models import CartItem, Product, ProductVariation, engine
 
 cart_bp = Blueprint("cart", __name__, url_prefix="/api/cart")
+
+
+@cart_bp.route("/add", methods=["POST"])
+def add_cart_item():
+    if "user_id" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+
+    data = request.get_json(silent=True) or {}
+    variation_id = data.get("variation_id")
+
+    if not variation_id:
+        return jsonify({"error": "Missing product option."}), 400
+
+    user_id = session["user_id"]
+
+    with Session(engine) as session_db:
+        variation = session_db.get(ProductVariation, variation_id)
+
+        if not variation:
+            return jsonify({"error": "Product option not found."}), 404
+
+        cart_item = session_db.scalars(
+            select(CartItem).where(
+                CartItem.customer_id == user_id,
+                CartItem.var_id == variation.var_id,
+            )
+        ).first()
+
+        if cart_item:
+            cart_item.quantity += 1
+        else:
+            session_db.add(
+                CartItem(
+                    customer_id=user_id,
+                    var_id=variation.var_id,
+                    quantity=1,
+                )
+            )
+
+        session_db.commit()
+
+    return jsonify({"success": True})
 
 
 @cart_bp.route("/items", methods=["GET"])

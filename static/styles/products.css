@@ -82,8 +82,12 @@
     align-items: end;
     overflow: hidden;
     background:
-        linear-gradient(145deg, rgba(240, 223, 187, 0.18), rgba(12, 12, 11, 0.92)),
+        linear-gradient(145deg, rgba(240, 223, 187, 0.03), rgba(12, 12, 11, 0.18)),
+        var(--car-image, linear-gradient(45deg, #232321, #0f0f0e)),
         linear-gradient(45deg, #232321, #0f0f0e);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .car-back {
@@ -103,8 +107,9 @@
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.72) 100%),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.34), transparent 58%);
+        radial-gradient(circle at center, transparent 34%, rgba(0, 0, 0, 0.28) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.12) 48%, rgba(0, 0, 0, 0.72) 100%),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.48), rgba(0, 0, 0, 0.08) 58%, rgba(0, 0, 0, 0.18) 100%);
 }
 
 .car-placeholder {
@@ -142,6 +147,11 @@
     gap: 22px;
     padding: 34px;
     overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.car-details::-webkit-scrollbar {
+    display: none;
 }
 
 .detail-topline {
@@ -201,6 +211,30 @@
     margin: 0;
     color: #f7f1e6;
     font-weight: 700;
+}
+
+.add-cart-btn {
+    width: fit-content;
+    min-height: 48px;
+    margin-top: 28px;
+    align-self: flex-end;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #f0dfbb, #cfb37c);
+    color: #151311;
+    font: inherit;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.add-cart-btn:hover,
+.add-cart-btn:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(207, 179, 124, 0.2);
+    outline: none;
 }
 
 .variants h3 {
@@ -264,6 +298,12 @@
     }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .car-card-inner {
+        transition: none;
+    }
+}
+
 @media (max-width: 640px) {
     body.menu-open .products-page {
         visibility: hidden;
@@ -309,6 +349,11 @@
 
     .spec-grid {
         grid-template-columns: 1fr;
+    }
+
+    .add-cart-btn {
+        width: 100%;
+        align-self: stretch;
     }
 
     .variant-chip {
