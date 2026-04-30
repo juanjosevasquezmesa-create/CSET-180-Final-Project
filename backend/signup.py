@@ -16,11 +16,14 @@ def signup():
         name = request.form.get('name', "").strip()
         username = request.form.get("username", "").strip()
         email = request.form.get("email", "").strip()
+        role = request.form.get("role", "").strip()
         password = request.form.get("password", "")
 
 
-        if not username or not email or not password or not name:
+        if not username or not email or not password or not name or not role:
             flash_message("All fields are required.", "error")
+        elif role not in {"customer", "vendor"}:
+            flash_message("Please select a valid role.", "error")
         else:
             with Session(engine) as session_db:
                 existing_user = session_db.scalars(
@@ -38,6 +41,7 @@ def signup():
                             name=name,
                             username=username,
                             email=email,
+                            role=role,
                             password=generate_password_hash(password),
                         )
                     )
