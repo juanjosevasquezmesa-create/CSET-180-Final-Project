@@ -63,6 +63,7 @@ def reset_auto_increment(session: Session) -> None:
 
 
 def seed_users(session: Session) -> dict[str, User]:
+
     users = {
         "admin": User(
             name="Admin User",
@@ -70,8 +71,9 @@ def seed_users(session: Session) -> dict[str, User]:
             # email="admin@luxemotor.com",
             email="admin@tsct.com",
             username="admin",
-            password=generate_password_hash("adminPW"),
+            password=generate_password_hash("246850"),
             role="admin",
+            isVerified="verified",
         ),
         "vendor_1": User(
             name="Marco Vendor",
@@ -79,6 +81,7 @@ def seed_users(session: Session) -> dict[str, User]:
             username="marco_vendor",
             password=generate_password_hash("vendorPW1"),
             role="vendor",
+            isVerified="verified",
         ),
         "vendor_2": User(
             name="Elena Vendor",
@@ -86,6 +89,7 @@ def seed_users(session: Session) -> dict[str, User]:
             username="elena_vendor",
             password=generate_password_hash("vendorPW2"),
             role="vendor",
+            isVerified="verified",
         ),
         "customer_1": User(
             name="Jordan Customer",
@@ -93,6 +97,7 @@ def seed_users(session: Session) -> dict[str, User]:
             username="jordan_customer",
             password=generate_password_hash("customerPW1"),
             role="customer",
+            isVerified="verified",
         ),
         "customer_2": User(
             name="Riley Customer",
@@ -100,6 +105,7 @@ def seed_users(session: Session) -> dict[str, User]:
             username="riley_customer",
             password=generate_password_hash("customerPW2"),
             role="customer",
+            isVerified="verified",
         ),
     }
 
