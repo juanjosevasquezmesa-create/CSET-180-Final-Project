@@ -1,0 +1,1 @@
+# customer accounts page functionality for customer users

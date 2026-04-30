@@ -1,0 +1,1 @@
+# admin accounts page functionality for admin users

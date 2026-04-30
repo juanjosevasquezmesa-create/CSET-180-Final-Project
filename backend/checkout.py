@@ -1,0 +1,1 @@
+# cart and checkout/place order functionality for customer users

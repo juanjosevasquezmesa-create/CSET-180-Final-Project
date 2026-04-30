@@ -1,0 +1,1 @@
+# accounts page functionality for vendor users
