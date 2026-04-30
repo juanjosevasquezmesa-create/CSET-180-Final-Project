@@ -18,6 +18,10 @@ def signup():
         email = request.form.get("email", "").strip()
         role = request.form.get("role", "").strip()
         password = request.form.get("password", "")
+        if role == "vendor":
+            verified = "pending"
+        else:
+            verified = "verified"
 
 
         if not username or not email or not password or not name or not role:
@@ -36,6 +40,7 @@ def signup():
                 if existing_user:
                     flash_message("That username or email is already in use.", "error")
                 else:
+                    
                     session_db.add(
                         User(
                             name=name,
@@ -43,6 +48,7 @@ def signup():
                             email=email,
                             role=role,
                             password=generate_password_hash(password),
+                            isVerified=verified
                         )
                     )
                     session_db.commit()
