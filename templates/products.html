@@ -16,7 +16,7 @@
                 {% for car in products %}
                     <article class="car-card" tabindex="0">
                         <div class="car-card-inner">
-                            <div class="car-media car-face car-front">
+                            <div class="car-media car-face car-front" {% if car.display_image_url %}style="--car-image: url('{{ car.display_image_url }}');"{% endif %}>
                                 {% set image = car.images|first if car.images is defined else none %}
                                 {% if image and image.img_url is defined and image.img_url %}
                                     <img src="{{ image.img_url }}" alt="{{ car.model }}">
@@ -55,6 +55,9 @@
                                 </dl>
 
                                 {% if car.variations is defined and car.variations %}
+                                    {% set cart_variant = car.variations|first %}
+                                    <button class="add-cart-btn" type="button" data-variation-id="{{ cart_variant.var_id }}">Add to Cart</button>
+
                                     <div class="variants">
                                         <h3>Available Options</h3>
                                         <div class="variant-list">
@@ -66,6 +69,8 @@
                                             {% endfor %}
                                         </div>
                                     </div>
+                                {% else %}
+                                    <button class="add-cart-btn" type="button" disabled>Add to Cart</button>
                                 {% endif %}
                             </div>
                         </div>

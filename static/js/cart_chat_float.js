@@ -27,6 +27,59 @@ document.addEventListener('DOMContentLoaded', function() {
             cartPopup.classList.add('hidden');
         });
     }
+
+    document.querySelectorAll('.add-cart-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const variationId = this.dataset.variationId;
+
+            if (!variationId || this.disabled) {
+                return;
+            }
+
+            const originalText = this.textContent;
+            this.disabled = true;
+            this.textContent = 'Adding...';
+
+            try {
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ variation_id: variationId }),
+                });
+                const data = await response.json();
+
+                if (!response.ok || data.error) {
+                    this.textContent = data.error || 'Could not add';
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.disabled = false;
+                    }, 1600);
+                    return;
+                }
+
+                this.textContent = 'Added';
+
+                if (cartPopup) {
+                    cartPopup.classList.remove('hidden');
+                    loadCartItems();
+                }
+
+                setTimeout(() => {
+                    this.textContent = originalText;
+                    this.disabled = false;
+                }, 1200);
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                this.textContent = 'Could not add';
+                setTimeout(() => {
+                    this.textContent = originalText;
+                    this.disabled = false;
+                }, 1600);
+            }
+        });
+    });
     
     // Chat Toggle
     if (chatToggleBtn) {
