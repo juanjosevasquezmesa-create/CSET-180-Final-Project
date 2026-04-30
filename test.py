@@ -32,4 +32,38 @@ def testFunction():
 
     return print("signup.html")
 
-testFunction()
+# testFunction()
+
+def testFunction2(user_id):
+    with Session(engine) as session_db:
+        user = session_db.get(User, user_id)
+        
+        if not user:
+            pass #add some error saying that user not found
+            # return redirect(url_for('all_accounts', error='User not found'))
+        
+        # Prevent admin from modifying their own verification status
+        # if user.role == "admin" and session.get('userID') == user_id:
+            pass #add some error saying admin cannot change their own accoutn
+            # return redirect(url_for('all_accounts', error='Cannot modify your own verification status'))
+        
+        # Toggle verification status
+        user.isVerified = "verified"
+        
+        session_db.commit()
+        if user.isVerified == "verified":
+            print(user.name, user.isVerified)
+        # success_message = f"User {'verified' if user.isVerified else 'unverified'} successfully"
+        return # redirect the admin to the all accounts page # redirect(url_for('all_accounts', success=success_message))
+    
+# testFunction2(7)
+
+def allVendorAccounts():
+    with Session(engine) as session_db:
+        vendors = session_db.scalars(select(User).join(Product, User.user_id == Product.vendor_id).distinct()).all()
+        # or vendor_users = session_db.query(User).join(Product, User.user_id == Product.vendor_id).distinct().all()
+        
+        for user in vendors:
+            print(user.user_id)
+
+allVendorAccounts()

@@ -6,12 +6,12 @@ from sqlalchemy.orm import Session
 from .models import CartItem, Order, OrderItem, engine
 
 
-cartToOrder_bp = Blueprint("recipt", __name__, url_prefix="/products")
+cartToOrder_bp = Blueprint("recipt", __name__)
 
 
 
 # Existing products page
-@cartToOrder_bp.route("/", methods=["GET"])
+@cartToOrder_bp.route("/recipt", methods=["GET"])
 def cartToOrder():
     with Session(engine) as session_db:
         products = session_db.scalars().all()

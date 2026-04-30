@@ -317,9 +317,3 @@
         border-radius: 8px;
     }
 }
-
-@media (prefers-reduced-motion: reduce) {
-    .car-card-inner {
-        transition: none;
-    }
-}
