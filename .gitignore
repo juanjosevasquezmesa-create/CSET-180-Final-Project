@@ -1,2 +1,11 @@
 .env
 .env.local
+
+__pycache__/
+backend/__pycache__/
+
+notes.txt
+
+testOrder.py
+testOrder copy.py
+test.py

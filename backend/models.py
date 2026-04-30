@@ -14,14 +14,19 @@ from sqlalchemy import (
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, relationship
 from werkzeug.security import generate_password_hash
 
-from backend.config import DATABASE_URL, DB_CREATE_DATABASE, DB_ECHO, DB_NAME, MYSQL_SERVER_URL
 
-conn_temp = create_engine(MYSQL_SERVER_URL)
+# --- Ensure database exists before proceeding ---
+from .config import DATABASE_URL, DB_CREATE_DATABASE, DB_ECHO, DB_NAME, MYSQL_SERVER_URL
 
-if DB_CREATE_DATABASE:
-    with conn_temp.connect() as conn:
-        conn.execute(text(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}"))
-        conn.commit()
+def ensure_database_exists():
+    if DB_CREATE_DATABASE:
+        temp_engine = create_engine(MYSQL_SERVER_URL)
+        with temp_engine.connect() as conn:
+            conn.execute(text(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}"))
+            conn.commit()
+        temp_engine.dispose()
+
+ensure_database_exists()
 
 engine = create_engine(DATABASE_URL, echo=DB_ECHO)
 
@@ -43,16 +48,19 @@ class User(Base):
     role: Mapped[str] = mapped_column(
         Enum("admin", "vendor", "customer", name="user_role"),
         nullable=False,
-        default="customer",
+        default="customer"
     )
-
+    isVerified: Mapped[str] = mapped_column (Enum("pending", "verified"),
+                                                nullable=False,
+                                                default="verified")
+    
     vendor_products: Mapped[list["Product"]] = relationship(
         foreign_keys="Product.vendor_id",
-        back_populates="vendor",
+        back_populates="vendor"
     )
     created_products: Mapped[list["Product"]] = relationship(
         foreign_keys="Product.created_by",
-        back_populates="creator",
+        back_populates="creator"
     )
     cart_items: Mapped[list["CartItem"]] = relationship(back_populates="customer")
     orders: Mapped[list["Order"]] = relationship(back_populates="customer")
@@ -373,9 +381,9 @@ class Message(Base):
 
 Base.metadata.create_all(engine)
 
+
 with Session(engine) as event:
     exists = event.scalars(select(User).where(User.email == "admin@tsct.com")).first()
-
     if not exists:
         event.add(
             User(
@@ -384,6 +392,7 @@ with Session(engine) as event:
                 email="admin@tsct.com",
                 password=generate_password_hash("adminPW"),
                 role="admin",
+                isVerified="verified"
             )
         )
         event.commit()

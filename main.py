@@ -5,6 +5,10 @@ from backend.config import FLASK_SECRET_KEY
 from backend.index import index_bp
 from backend.login import login_bp
 from backend.signup import signup_bp
+from backend.logout import logout_bp
+from backend.productsList import productList_bp
+from backend.cart import cart_bp
+from backend.chat import chat_bp
 
 app = Flask(__name__)
 # Now you can access variables like this:
@@ -18,6 +22,11 @@ app.config["SECRET_KEY"] = FLASK_SECRET_KEY
 app.register_blueprint(index_bp)
 app.register_blueprint(login_bp)
 app.register_blueprint(signup_bp)
+app.register_blueprint(logout_bp)
+app.register_blueprint(productList_bp)
+app.register_blueprint(cart_bp)
+app.register_blueprint(chat_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
+
