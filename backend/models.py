@@ -392,6 +392,7 @@ with Session(engine) as event:
                 email="admin@tsct.com",
                 password=generate_password_hash("adminPW"),
                 role="admin",
+                isVerified="verified"
             )
         )
         event.commit()
