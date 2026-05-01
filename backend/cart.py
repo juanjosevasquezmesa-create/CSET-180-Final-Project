@@ -26,6 +26,9 @@ def add_cart_item():
         if not variation:
             return jsonify({"error": "Product option not found."}), 404
 
+        if variation.stock < 1:
+            return jsonify({"error": "This option is out of stock."}), 400
+
         cart_item = session_db.scalars(
             select(CartItem).where(
                 CartItem.customer_id == user_id,
@@ -34,6 +37,8 @@ def add_cart_item():
         ).first()
 
         if cart_item:
+            if cart_item.quantity >= variation.stock:
+                return jsonify({"error": "No more stock available for this option."}), 400
             cart_item.quantity += 1
         else:
             session_db.add(
@@ -44,6 +49,54 @@ def add_cart_item():
                 )
             )
 
+        session_db.commit()
+
+    return jsonify({"success": True})
+
+
+@cart_bp.route("/items/<int:cart_item_id>", methods=["PATCH"])
+def update_cart_item(cart_item_id):
+    if "user_id" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+
+    data = request.get_json(silent=True) or {}
+    quantity = data.get("quantity")
+
+    try:
+        quantity = int(quantity)
+    except (TypeError, ValueError):
+        return jsonify({"error": "Quantity must be a number."}), 400
+
+    if quantity < 1:
+        return jsonify({"error": "Quantity must be at least 1."}), 400
+
+    with Session(engine) as session_db:
+        cart_item = session_db.get(CartItem, cart_item_id)
+
+        if not cart_item or cart_item.customer_id != session["user_id"]:
+            return jsonify({"error": "Cart item not found."}), 404
+
+        if quantity > cart_item.variation.stock:
+            return jsonify({"error": "Quantity exceeds available stock."}), 400
+
+        cart_item.quantity = quantity
+        session_db.commit()
+
+    return jsonify({"success": True})
+
+
+@cart_bp.route("/items/<int:cart_item_id>", methods=["DELETE"])
+def remove_cart_item(cart_item_id):
+    if "user_id" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+
+    with Session(engine) as session_db:
+        cart_item = session_db.get(CartItem, cart_item_id)
+
+        if not cart_item or cart_item.customer_id != session["user_id"]:
+            return jsonify({"error": "Cart item not found."}), 404
+
+        session_db.delete(cart_item)
         session_db.commit()
 
     return jsonify({"success": True})
@@ -82,6 +135,7 @@ def get_cart_items():
                 "year": variation.year,
                 "price": float(product.price),
                 "quantity": item.quantity,
+                "stock": variation.stock,
                 "item_total": item_total,
             })
         
