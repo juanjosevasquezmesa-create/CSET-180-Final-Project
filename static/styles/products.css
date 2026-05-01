@@ -313,11 +313,6 @@
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .car-card-inner {
-        transition: none;
-    }
-}
 
 @media (max-width: 640px) {
     body.menu-open .products-page {
