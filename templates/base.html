@@ -29,6 +29,9 @@
                     <a href="{{ url_for('index.index') }}#home">Home</a>
                     <a href="/products">Browse Cars</a>
                     <a href="{{ url_for('index.index') }}#contact">Contact</a>
+                    {% if session %}
+                        <a href="/account/{{session.role}}">Account</a>
+                    {% endif %}
                 </div>
                 {% if session %}
                     <div class="nav-btns">

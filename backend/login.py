@@ -28,6 +28,7 @@ def login():
             session["user_id"] = user.userID
             session["name"] = user.name
             session["username"] = user.username
+            session["role"] = user.role
             return redirect(url_for("index.index"))
 
         error = "Invalid username or password."

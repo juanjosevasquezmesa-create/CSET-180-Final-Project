@@ -66,4 +66,14 @@ def allVendorAccounts():
         for user in vendors:
             print(user.user_id)
 
-allVendorAccounts()
+# allVendorAccounts()
+
+def getVendorName(product_id):
+    with Session(engine) as session_db:
+        productUser = session_db.scalars(select(User.user_id).join(Product, User.user_id == Product.vendor_id).where(Product.product_id == product_id)).first()
+        
+        print("Vendor id:",productUser)
+        return ""
+    
+
+getVendorName(2)
