@@ -110,7 +110,7 @@ class Product(Base):
     )
     variations: Mapped[list["ProductVariation"]] = relationship(
         back_populates="product",
-        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
     reviews: Mapped[list["Review"]] = relationship(
         back_populates="product",
@@ -138,15 +138,15 @@ class ProductVariation(Base):
     var_id: Mapped[int] = mapped_column(
         Integer, Identity(start=1), primary_key=True, autoincrement=True
     )
-    product_id: Mapped[int] = mapped_column(
-        ForeignKey("products.product_id", ondelete="CASCADE"),
-        nullable=False,
+    product_id: Mapped[int | None] = mapped_column(
+        ForeignKey("products.product_id", ondelete="SET NULL"),
+        nullable=True,
     )
     color: Mapped[str] = mapped_column(String(50), nullable=False)
     year: Mapped[str] = mapped_column(String(4), nullable=False)
     stock: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
-    product: Mapped["Product"] = relationship(back_populates="variations")
+    product: Mapped["Product | None"] = relationship(back_populates="variations")
     cart_items: Mapped[list["CartItem"]] = relationship(
         back_populates="variation",
         cascade="all, delete-orphan",

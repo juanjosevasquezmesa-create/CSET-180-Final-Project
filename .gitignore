@@ -9,3 +9,5 @@ notes.txt
 testOrder.py
 testOrder copy.py
 test.py
+
+alter_product_var_set_null.sql
