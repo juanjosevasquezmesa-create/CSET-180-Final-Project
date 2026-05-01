@@ -1,1 +1,0 @@
-# customer review functionality for customer users
