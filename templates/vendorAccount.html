@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/vendor.css') }}">
+{% endblock %}
+
+{% block title %}Vendor Account | Lux Auto{% endblock %}
+
+{% block body %}
+    <main class="vendor-page">
+        <section class="vendor-shell">
+            <aside class="vendor-sidebar">
+                <div class="vendor-card">
+                    <p class="tag">Vendor</p>
+                    <h1>{{ session.username|title }}</h1>
+                    <p>{{ session.name|title }}</p>
+                </div>
+
+                <a class="btn main-btn add-product-link" href="{{ url_for('vendorProduct.productAdd') }}">Add Product</a>
+            </aside>
+
+            <section class="vendor-products" aria-label="Vendor products">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-list" aria-live="polite">
+                            {% for category, message in messages %}
+                                <p class="flash-message {{ category }}">{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                {% if products %}
+                    <div class="product-list">
+                        {% for product in products %}
+                            <article class="vendor-product-row">
+                                <div class="product-summary">
+                                    <h2>{{ product.model }}</h2>
+                                    <p>
+                                        ${{ "{:,.2f}".format(product.price) }}
+                                        {% if product.variations %}
+                                            <span>{{ product.variations|length }} variation{% if product.variations|length != 1 %}s{% endif %}</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+
+                                <div class="product-actions">
+                                    <a
+                                        class="icon-action"
+                                        href="{{ url_for('vendorProduct.productEdit', product_id=product.product_id) }}"
+                                        aria-label="Edit {{ product.model }}"
+                                        title="Edit"
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <path d="M14 2v6h6"></path>
+                                            <path d="M9 15h6"></path>
+                                            <path d="M9 18h4"></path>
+                                        </svg>
+                                    </a>
+
+                                    <a
+                                        class="icon-action danger"
+                                        href="{{ url_for('vendorProduct.productDelConfirm', product_id=product.product_id) }}"
+                                        aria-label="Delete {{ product.model }}"
+                                        title="Delete"
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M3 6h18"></path>
+                                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                                            <path d="M10 11v6"></path>
+                                            <path d="M14 11v6"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-vendor-state">
+                        <h2>No products yet</h2>
+                        <p>Add your first vehicle listing to start building your inventory.</p>
+                        <a class="btn main-btn" href="{{ url_for('vendorProduct.productAdd') }}">Add Product</a>
+                    </div>
+                {% endif %}
+            </section>
+        </section>
+    </main>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        window.addEventListener("load", () => {
+            const menuToggle = document.querySelector(".menu-toggle");
+            const navPanel = document.querySelector(".nav-panel");
+            const menuBackdrop = document.querySelector(".menu-backdrop");
+
+            if (!menuToggle || !navPanel) {
+                return;
+            }
+
+            const closeMenu = () => {
+                menuToggle.setAttribute("aria-expanded", "false");
+                navPanel.classList.remove("is-open");
+                document.body.classList.remove("menu-open");
+            };
+
+            menuToggle.addEventListener("click", () => {
+                const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
+                menuToggle.setAttribute("aria-expanded", String(!isOpen));
+                navPanel.classList.toggle("is-open", !isOpen);
+                document.body.classList.toggle("menu-open", !isOpen);
+            });
+
+            navPanel.querySelectorAll("a").forEach((link) => {
+                link.addEventListener("click", closeMenu);
+            });
+
+            if (menuBackdrop) {
+                menuBackdrop.addEventListener("click", closeMenu);
+            }
+
+            window.addEventListener("resize", () => {
+                if (window.innerWidth > 640) {
+                    closeMenu();
+                }
+            });
+        });
+    </script>
+{% endblock %}

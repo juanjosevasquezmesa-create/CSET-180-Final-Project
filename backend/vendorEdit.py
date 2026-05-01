@@ -4,7 +4,7 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, s
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from .models import Product, ProductVariation, User, engine
+from .models import OrderItem, Product, ProductVariation, User, engine
 
 
 productEdit_bp = Blueprint("productEdit", __name__, url_prefix="/account/vendor/")
@@ -78,6 +78,16 @@ def productEdit(product_id):
             variation_id = str(variation.var_id)
 
             if variation_id not in selected_variation_ids:
+                hasOrders = session_db.scalars(
+                    select(OrderItem.order_item_id).where(
+                        OrderItem.var_id == variation.var_id
+                    )
+                ).first()
+
+                if hasOrders:
+                    variation.stock = 0
+                    continue
+
                 session_db.delete(variation)
                 continue
 

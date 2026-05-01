@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/vendor.css') }}">
+{% endblock %}
+
+{% block title %}Delete {{ product.model }} | Lux Auto{% endblock %}
+
+{% block body %}
+    <main class="vendor-page confirm-page">
+        <section class="delete-panel">
+            <p class="tag">Confirm Delete</p>
+            <h1>Delete {{ product.model }}?</h1>
+            <p class="delete-copy">
+                This will remove the product and its variations from your inventory.
+            </p>
+
+            <dl class="delete-details">
+                <div>
+                    <dt>Product ID</dt>
+                    <dd>#{{ product.product_id }}</dd>
+                </div>
+                <div>
+                    <dt>Price</dt>
+                    <dd>${{ "{:,.2f}".format(product.price) }}</dd>
+                </div>
+            </dl>
+
+            <form class="delete-actions" method="POST">
+                <a class="btn alt-btn" href="{{ url_for('vAccount.vendorAcc') }}">Cancel</a>
+                <button class="btn danger-btn" type="submit">Delete Product</button>
+            </form>
+        </section>
+    </main>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        window.addEventListener("load", () => {
+            const menuToggle = document.querySelector(".menu-toggle");
+            const navPanel = document.querySelector(".nav-panel");
+            const menuBackdrop = document.querySelector(".menu-backdrop");
+
+            if (!menuToggle || !navPanel) {
+                return;
+            }
+
+            const closeMenu = () => {
+                menuToggle.setAttribute("aria-expanded", "false");
+                navPanel.classList.remove("is-open");
+                document.body.classList.remove("menu-open");
+            };
+
+            menuToggle.addEventListener("click", () => {
+                const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
+                menuToggle.setAttribute("aria-expanded", String(!isOpen));
+                navPanel.classList.toggle("is-open", !isOpen);
+                document.body.classList.toggle("menu-open", !isOpen);
+            });
+
+            navPanel.querySelectorAll("a").forEach((link) => {
+                link.addEventListener("click", closeMenu);
+            });
+
+            if (menuBackdrop) {
+                menuBackdrop.addEventListener("click", closeMenu);
+            }
+
+            window.addEventListener("resize", () => {
+                if (window.innerWidth > 640) {
+                    closeMenu();
+                }
+            });
+        });
+    </script>
+{% endblock %}
