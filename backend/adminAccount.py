@@ -105,7 +105,7 @@ def admin_account():
         return render_template("admin_account.html", error=error_msg)
 
 
-@aAccount_bp.route("admin/complaint/<int:complaint_id>/update-status", methods=["POST"])
+@admin_account_bp.route("admin/complaint/<int:complaint_id>/update-status", methods=["POST"])
 def update_complaint_status(complaint_id):
     """Update complaint status and assign handler"""
     if not session or session.get("role") != "admin":
