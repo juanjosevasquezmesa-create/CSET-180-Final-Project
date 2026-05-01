@@ -11,6 +11,7 @@ from backend.cart import cart_bp
 from backend.cartPage import cart_page_bp
 from backend.cartToOrder import cartToOrder_bp
 from backend.chat import chat_bp
+from backend.vendorEdit import productEdit_bp
 
 app = Flask(__name__)
 # Now you can access variables like this:
@@ -30,6 +31,7 @@ app.register_blueprint(cart_bp)
 app.register_blueprint(cart_page_bp)
 app.register_blueprint(cartToOrder_bp)
 app.register_blueprint(chat_bp)
+app.register_blueprint(productEdit_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
