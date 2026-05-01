@@ -1,6 +1,4 @@
-from flask import Blueprint, render_template, session, redirect, url_for, request, flash
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
+from flask import Blueprint, session, redirect, url_for, flash
 from sqlalchemy.orm import Session
 
 from .models import CartItem, Order, OrderItem, engine
@@ -13,9 +11,7 @@ cartToOrder_bp = Blueprint("recipt", __name__)
 # Existing products page
 @cartToOrder_bp.route("/recipt", methods=["GET"])
 def cartToOrder():
-    with Session(engine) as session_db:
-        products = session_db.scalars().all()
-    return render_template("products.html", products=products, session=session)
+    return redirect(url_for("cartPage.view_cart"))
 
 
 # New checkout endpoint
@@ -24,13 +20,13 @@ def checkout():
     user_id = session.get("user_id")
     if not user_id:
         flash("You must be logged in to checkout.")
-        return redirect(url_for("recipt.cartToOrder"))
+        return redirect(url_for("cartPage.view_cart"))
 
     with Session(engine) as session_db:
         cart_items = session_db.query(CartItem).filter_by(customer_id=user_id).all()
         if not cart_items:
             flash("Your cart is empty.")
-            return redirect(url_for("recipt.cartToOrder"))
+            return redirect(url_for("cartPage.view_cart"))
 
         total_price = 0
         order_items = []
@@ -66,4 +62,4 @@ def checkout():
         session_db.commit()
 
         flash("Order placed successfully!")
-        return redirect(url_for("recipt.cartToOrder"))
+        return redirect(url_for("cartPage.view_cart"))

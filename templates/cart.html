@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/cart.css') }}">
+{% endblock %}
+
+{% block title %}Your Cart | Lux Auto{% endblock %}
+
+{% block body %}
+    <main class="cart-page">
+        <section class="cart-shell" aria-label="Shopping cart">
+            <div class="cart-heading">
+                <p class="cart-kicker">Shopping Cart</p>
+                <h1>Your Cart</h1>
+                <a class="continue-link" href="/products">Continue Shopping</a>
+            </div>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="cart-alerts">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% if cart_items %}
+                <div class="cart-layout">
+                    <div class="cart-items">
+                        {% for item in cart_items %}
+                            {% set product = item.variation.product %}
+                            <article class="cart-row" data-cart-item-id="{{ item.cart_item_id }}">
+                                <div class="cart-row-main">
+                                    <p class="cart-item-model">{{ product.model }}</p>
+                                    <p class="cart-item-meta">{{ item.variation.year }} {{ item.variation.color }}</p>
+                                    <p class="cart-item-stock">{{ item.variation.stock }} in stock</p>
+                                </div>
+
+                                <div class="quantity-control" aria-label="Quantity for {{ product.model }}">
+                                    <button class="quantity-btn" type="button" data-change="-1" aria-label="Decrease quantity">-</button>
+                                    <input
+                                        class="quantity-input"
+                                        type="number"
+                                        min="1"
+                                        max="{{ item.variation.stock }}"
+                                        value="{{ item.quantity }}"
+                                        data-price="{{ '%.2f'|format(product.price|float) }}"
+                                    >
+                                    <button class="quantity-btn" type="button" data-change="1" aria-label="Increase quantity">+</button>
+                                </div>
+
+                                <div class="cart-row-total">
+                                    <p>${{ "{:,.2f}".format(product.price * item.quantity) }}</p>
+                                    <button class="remove-item-btn" type="button">Remove</button>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+
+                    <aside class="cart-summary" aria-label="Order summary">
+                        <h2>Order Summary</h2>
+                        <div class="summary-line">
+                            <span>Subtotal</span>
+                            <strong id="cart-subtotal">${{ "{:,.2f}".format(subtotal) }}</strong>
+                        </div>
+                        <p class="summary-note">Taxes, delivery, and warranty handling are confirmed at checkout.</p>
+                        <form method="POST" action="/checkout">
+                            <button class="checkout-action" type="submit">Checkout</button>
+                        </form>
+                    </aside>
+                </div>
+            {% else %}
+                <div class="empty-cart-state">
+                    <h2>Your cart is empty</h2>
+                    <p>Add a vehicle from the showroom to review and edit it here.</p>
+                    <a class="checkout-action" href="/products">Browse Cars</a>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/cart_page.js') }}"></script>
+{% endblock %}

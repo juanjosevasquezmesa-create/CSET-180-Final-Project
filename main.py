@@ -8,6 +8,8 @@ from backend.signup import signup_bp
 from backend.logout import logout_bp
 from backend.productsList import productList_bp
 from backend.cart import cart_bp
+from backend.cartPage import cart_page_bp
+from backend.cartToOrder import cartToOrder_bp
 from backend.chat import chat_bp
 
 app = Flask(__name__)
@@ -25,6 +27,8 @@ app.register_blueprint(signup_bp)
 app.register_blueprint(logout_bp)
 app.register_blueprint(productList_bp)
 app.register_blueprint(cart_bp)
+app.register_blueprint(cart_page_bp)
+app.register_blueprint(cartToOrder_bp)
 app.register_blueprint(chat_bp)
 
 if __name__ == "__main__":

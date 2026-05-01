@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
         cartTotalContainer.innerHTML = `
             <div class="cart-footer">
                 <p class="cart-total">Total: $${data.total_price.toFixed(2)}</p>
-                <a href="/checkout" class="checkout-btn">Proceed to Checkout</a>
+                <a href="/cart" class="checkout-btn">View/Edit Cart</a>
             </div>
         `;
     }

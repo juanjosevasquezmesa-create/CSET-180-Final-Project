@@ -40,38 +40,6 @@
     <script>
         window.addEventListener("load", () => {
             const heroVideo = document.getElementById("video");
-            const menuToggle = document.querySelector(".menu-toggle");
-            const navPanel = document.querySelector(".nav-panel");
-            const menuBackdrop = document.querySelector(".menu-backdrop");
-
-            if (menuToggle && navPanel) {
-                const closeMenu = () => {
-                    menuToggle.setAttribute("aria-expanded", "false");
-                    navPanel.classList.remove("is-open");
-                    document.body.classList.remove("menu-open");
-                };
-
-                menuToggle.addEventListener("click", () => {
-                    const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
-                    menuToggle.setAttribute("aria-expanded", String(!isOpen));
-                    navPanel.classList.toggle("is-open", !isOpen);
-                    document.body.classList.toggle("menu-open", !isOpen);
-                });
-
-                navPanel.querySelectorAll("a").forEach((link) => {
-                    link.addEventListener("click", closeMenu);
-                });
-
-                if (menuBackdrop) {
-                    menuBackdrop.addEventListener("click", closeMenu);
-                }
-
-                window.addEventListener("resize", () => {
-                    if (window.innerWidth > 640) {
-                        closeMenu();
-                    }
-                });
-            }
 
             if (heroVideo) {
                 heroVideo.loop = false;
