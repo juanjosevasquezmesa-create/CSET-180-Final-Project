@@ -2,7 +2,7 @@ from flask import Blueprint, abort, flash, redirect, render_template, session, u
 from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 
-from .models import Product, User,  engine
+from .models import CartItem, Product, ProductVariation, User,  engine
 
 
 productDel_bp = Blueprint("productDel", __name__, url_prefix="/account/vendor/")
@@ -64,7 +64,13 @@ def productDel(product_id):
         if productUser != session.get("user_id"):
             abort(403)
 
+        productVariations = select(ProductVariation.var_id).where(
+            ProductVariation.product_id == product_id
+        )
+        cartItemsDelete = delete(CartItem).where(CartItem.var_id.in_(productVariations))
         productDelete = delete(Product).where(Product.product_id == product_id)
+
+        session_db.execute(cartItemsDelete)
         session_db.execute(productDelete)
         session_db.commit()
         flash("Product deleted successfully.", "success")
