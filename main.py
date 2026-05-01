@@ -15,7 +15,9 @@ from backend.vendorAccount import vendor_Account_bp
 from backend.vendorAdd import productAdd_bp
 from backend.vendorDelete import productDel_bp
 from backend.vendorEdit import productEdit_bp
-from backend.vendorProduct import vendorProduct_bp
+from backend.adminAccount import admin_account_bp
+from backend.customerAccount import customer_account_bp
+from backend.vendorAccount import vendor_account_bp
 
 app = Flask(__name__)
 # Now you can access variables like this:
