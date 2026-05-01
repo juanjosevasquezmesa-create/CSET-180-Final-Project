@@ -2,8 +2,13 @@
     min-height: 100vh;
     padding: 150px 24px 72px;
     background:
+        linear-gradient(180deg, rgba(8, 8, 7, 0.48) 0%, rgba(8, 8, 7, 0.68) 100%),
         radial-gradient(circle at 12% 18%, rgba(240, 223, 187, 0.12), transparent 28%),
-        linear-gradient(180deg, #151513 0%, #090908 100%);
+        url("../images/showroom.png");
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .products-hero,
@@ -82,12 +87,23 @@
     align-items: end;
     overflow: hidden;
     background:
-        linear-gradient(145deg, rgba(240, 223, 187, 0.18), rgba(12, 12, 11, 0.92)),
+        linear-gradient(145deg, rgba(240, 223, 187, 0.03), rgba(12, 12, 11, 0.18)),
+        var(--car-image, linear-gradient(45deg, #232321, #0f0f0e)),
         linear-gradient(45deg, #232321, #0f0f0e);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .car-back {
     transform: rotateX(180deg);
+    background:
+        linear-gradient(180deg, rgba(10, 10, 9, 0.46), rgba(10, 10, 9, 0.66)),
+        linear-gradient(110deg, rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.08) 58%, rgba(0, 0, 0, 0.34)),
+        url("https://images.unsplash.com/photo-1529186405194-c57220dec7c0?auto=format&fit=crop&w=1800&q=85");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .car-media img {
@@ -96,15 +112,19 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    z-index: 0;
 }
 
 .car-media::after {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: -1px;
+    z-index: 1;
+    pointer-events: none;
     background:
-        linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.72) 100%),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.34), transparent 58%);
+        radial-gradient(circle at center, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.38) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.24) 42%, rgba(0, 0, 0, 0.82) 100%),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.18) 58%, rgba(0, 0, 0, 0.38) 100%);
 }
 
 .car-placeholder {
@@ -114,7 +134,7 @@
 
 .car-name {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     padding: 28px;
 }
 
@@ -142,6 +162,11 @@
     gap: 22px;
     padding: 34px;
     overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.car-details::-webkit-scrollbar {
+    display: none;
 }
 
 .detail-topline {
@@ -201,6 +226,30 @@
     margin: 0;
     color: #f7f1e6;
     font-weight: 700;
+}
+
+.add-cart-btn {
+    width: fit-content;
+    min-height: 48px;
+    margin-top: 28px;
+    align-self: flex-end;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #f0dfbb, #cfb37c);
+    color: #151311;
+    font: inherit;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.add-cart-btn:hover,
+.add-cart-btn:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(207, 179, 124, 0.2);
+    outline: none;
 }
 
 .variants h3 {
@@ -264,6 +313,12 @@
     }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .car-card-inner {
+        transition: none;
+    }
+}
+
 @media (max-width: 640px) {
     body.menu-open .products-page {
         visibility: hidden;
@@ -309,6 +364,11 @@
 
     .spec-grid {
         grid-template-columns: 1fr;
+    }
+
+    .add-cart-btn {
+        width: 100%;
+        align-self: stretch;
     }
 
     .variant-chip {

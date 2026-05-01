@@ -168,9 +168,16 @@ a {
         0 0;
     background-size: 6px 6px, 6px 6px, 100% 100%;
     background-repeat: no-repeat;
+    cursor: pointer;
 }
 
 .form-group select option {
+    background: #1b1a17;
+    color: #f7f1e6;
+}
+
+.form-group select option:checked {
+    background: #cfb37c;
     color: #151311;
 }
 

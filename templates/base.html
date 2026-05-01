@@ -28,6 +28,7 @@
                 <div class="links">
                     <a href="{{ url_for('index.index') }}#home">Home</a>
                     <a href="/products">Browse Cars</a>
+                    <a href="/cart">Cart</a>
                     <a href="{{ url_for('index.index') }}#contact">Contact</a>
                     {% if session %}
                         <a href="/account/{{session.role}}">Account</a>
@@ -99,6 +100,44 @@
     
     {% block body %}{% endblock %}
     <script src="{{ url_for('static', filename='js/cart_chat_float.js') }}"></script>
+    <script>
+        window.addEventListener("load", () => {
+            const menuToggle = document.querySelector(".menu-toggle");
+            const navPanel = document.querySelector(".nav-panel");
+            const menuBackdrop = document.querySelector(".menu-backdrop");
+
+            if (!menuToggle || !navPanel) {
+                return;
+            }
+
+            const closeMenu = () => {
+                menuToggle.setAttribute("aria-expanded", "false");
+                navPanel.classList.remove("is-open");
+                document.body.classList.remove("menu-open");
+            };
+
+            menuToggle.addEventListener("click", () => {
+                const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
+                menuToggle.setAttribute("aria-expanded", String(!isOpen));
+                navPanel.classList.toggle("is-open", !isOpen);
+                document.body.classList.toggle("menu-open", !isOpen);
+            });
+
+            navPanel.querySelectorAll("a").forEach((link) => {
+                link.addEventListener("click", closeMenu);
+            });
+
+            if (menuBackdrop) {
+                menuBackdrop.addEventListener("click", closeMenu);
+            }
+
+            window.addEventListener("resize", () => {
+                if (window.innerWidth > 640) {
+                    closeMenu();
+                }
+            });
+        });
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

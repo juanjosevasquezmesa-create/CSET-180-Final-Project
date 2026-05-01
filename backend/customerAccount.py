@@ -17,3 +17,4 @@ def customerAcc():
         pass # some sort of logic to prompt the user to go back to the login page
     if session["role"] != "customer":
         pass # some sort of logic to prompt the user to go back to the main page
+# customer accounts page functionality for customer users
