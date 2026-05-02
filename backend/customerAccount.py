@@ -1,19 +1,51 @@
 # Hub for customer account functions
 
-from flask import Blueprint, render_template, request, redirect, session, url_for
+from flask import Blueprint, render_template, redirect, session, url_for
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .models import User, engine
-from werkzeug.security import check_password_hash
+from .models import User, Order, engine
 
 customer_account_bp = Blueprint("customer_account", __name__, url_prefix="/account/")
 
 
-@customer_account_bp.route("customer", methods=["GET", "POST"])
+@customer_account_bp.route("customer", methods=["GET"])
 def customer_account():
     if not session:
-        pass # some sort of logic to prompt the user to go back to the login page
-    if session["role"] != "customer":
-        pass # some sort of logic to prompt the user to go back to the main page
-# customer accounts page functionality for customer users
+        return redirect(url_for("login.login"))
+    if session.get("role") != "customer":
+        return redirect(url_for("index.index"))
+
+    user_id = session["user_id"]
+    with Session(engine) as session_db:
+        user = session_db.get(User, user_id)
+        if not user:
+            return redirect(url_for("login.login"))
+
+        orders = session_db.scalars(
+            select(Order).where(Order.customer_id == user_id).order_by(Order.order_date.desc())
+        ).all()
+
+        order_data = []
+        for order in orders:
+            items = []
+            for item in order.items:
+                product = item.variation.product
+                items.append({
+                    "order_item_id": item.order_item_id,
+                    "product_id": product.product_id,
+                    "model": product.model,
+                    "quantity": item.quantity,
+                    "price": item.price,
+                    "variation": f"{item.variation.color} {item.variation.year}"
+                })
+            order_data.append({
+                "order_id": order.order_id,
+                "order_date": order.order_date,
+                "total_price": order.total_price,
+                "status": order.status,
+                "items": items,
+                "detail_url": url_for("customer_orders.order_details", order_id=order.order_id),
+            })
+
+    return render_template("customerAccount.html", user=user, orders=order_data)
