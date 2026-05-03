@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/cart.css') }}">
+    <style>
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 28px;
+            align-items: start;
+        }
+        @media (max-width: 860px) {
+            .checkout-grid { grid-template-columns: 1fr; }
+        }
+        .payment-panel, .order-panel {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: 12px;
+            padding: 28px;
+        }
+        .payment-panel h2, .order-panel h2 {
+            margin: 0 0 22px;
+            font-family: "Cormorant Garamond", serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        .payment-type {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+        .payment-type label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: border-color 0.2s, background 0.2s;
+            color: rgba(247, 241, 230, 0.7);
+        }
+        .payment-type input[type="radio"] { accent-color: #cfb37c; }
+        .payment-type label:has(input:checked) {
+            border-color: #cfb37c;
+            background: rgba(207, 179, 124, 0.08);
+            color: #f7f1e6;
+        }
+        .field { margin-bottom: 16px; }
+        .field label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(247, 241, 230, 0.55);
+            margin-bottom: 6px;
+        }
+        .field input {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            color: #f7f1e6;
+            font-family: "Manrope", sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        .field input::placeholder { color: rgba(247, 241, 230, 0.28); }
+        .field input:focus { border-color: rgba(207, 179, 124, 0.6); }
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .pay-btn {
+            width: 100%;
+            margin-top: 8px;
+            padding: 14px;
+            background: linear-gradient(135deg, #cfb37c, #b8924a);
+            border: none;
+            border-radius: 8px;
+            color: #0b0b0a;
+            font-family: "Manrope", sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        .pay-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* Order items — consistent Manrope price font throughout */
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            gap: 12px;
+        }
+        .order-item:last-of-type { border-bottom: none; }
+        .order-item-info .item-name { font-weight: 600; font-size: 0.97rem; margin: 0 0 4px; }
+        .order-item-info .item-meta { font-size: 0.82rem; color: rgba(247, 241, 230, 0.5); margin: 0; }
+
+        /* Unified price style — matches product list: Manrope, 800 weight, gold */
+        .item-price-tag {
+            font-family: "Manrope", sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            color: #f0dfbb;
+            white-space: nowrap;
+        }
+
+        .order-divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 18px 0 14px; }
+        .order-total-line { display: flex; justify-content: space-between; align-items: center; }
+        .order-total-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(247, 241, 230, 0.55);
+        }
+        /* Total uses same Manrope 800 as items, just larger */
+        .order-total-amount {
+            font-family: "Manrope", sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: #f0dfbb;
+        }
+
+        .success-banner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(52, 199, 89, 0.1);
+            border: 1px solid rgba(52, 199, 89, 0.3);
+            border-radius: 10px;
+            padding: 18px 22px;
+            margin-bottom: 28px;
+        }
+        .success-banner svg { flex-shrink: 0; color: #34c759; }
+        .success-banner strong { display: block; font-size: 1rem; margin-bottom: 2px; color: #34c759; }
+        .success-banner p { margin: 0; font-size: 0.88rem; color: rgba(247, 241, 230, 0.65); }
+        .success-actions { display: flex; gap: 14px; margin-top: 22px; }
+        .success-actions a { flex: 1; text-align: center; padding: 13px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; }
+        .btn-gold { background: linear-gradient(135deg, #cfb37c, #b8924a); color: #0b0b0a; }
+        .btn-ghost { border: 1px solid rgba(255,255,255,0.18); color: #f7f1e6; }
+        .empty-notice { text-align: center; padding: 48px 24px; color: rgba(247, 241, 230, 0.5); }
+        .empty-notice h2 { font-family: "Cormorant Garamond", serif; font-size: 1.8rem; margin-bottom: 10px; color: #f7f1e6; }
+    </style>
+{% endblock %}
+
+{% block title %}Checkout | Lux Auto{% endblock %}
+
+{% block body %}
+<main class="cart-page">
+    <section class="cart-shell" aria-label="Checkout">
+        <div class="cart-heading">
+            <div>
+                <p class="cart-kicker">Secure Checkout</p>
+                <h1>Complete Your Order</h1>
+            </div>
+            <a class="continue-link" href="{{ url_for('cartPage.view_cart') }}">Back to Cart</a>
+        </div>
+
+        {% if payment_success %}
+            <div class="success-banner">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <div>
+                    <strong>Payment Successful!</strong>
+                    <p>Your order has been confirmed. You'll receive a confirmation shortly.</p>
+                </div>
+            </div>
+            <div class="order-panel">
+                <h2>Order Summary</h2>
+                {% for item in cart_items %}
+                    <div class="order-item">
+                        <div class="order-item-info">
+                            <p class="item-name">{{ item.product_name }}</p>
+                            <p class="item-meta">{{ item.year }} &middot; {{ item.color }} &middot; Qty {{ item.quantity }}</p>
+                        </div>
+                        <span class="item-price-tag">${{ "{:,.2f}".format(item.price * item.quantity) }}</span>
+                    </div>
+                {% endfor %}
+                <hr class="order-divider">
+                <div class="order-total-line">
+                    <span class="order-total-label">Total Paid</span>
+                    <span class="order-total-amount">${{ "{:,.2f}".format(cart_total) }}</span>
+                </div>
+                <div class="success-actions">
+                    <a class="btn-gold" href="{{ url_for('customer_account.customer_account') }}">View Orders</a>
+                    <a class="btn-ghost" href="{{ url_for('productList.products') }}">Browse More</a>
+                </div>
+            </div>
+
+        {% elif cart_items %}
+            <div class="checkout-grid">
+                <div class="order-panel">
+                    <h2>Order Summary</h2>
+                    {% for item in cart_items %}
+                        <div class="order-item">
+                            <div class="order-item-info">
+                                <p class="item-name">{{ item.product_name }}</p>
+                                <p class="item-meta">{{ item.year }} &middot; {{ item.color }} &middot; Qty {{ item.quantity }}</p>
+                            </div>
+                            <span class="item-price-tag">${{ "{:,.2f}".format(item.price * item.quantity) }}</span>
+                        </div>
+                    {% endfor %}
+                    <hr class="order-divider">
+                    <div class="order-total-line">
+                        <span class="order-total-label">Order Total</span>
+                        <span class="order-total-amount">${{ "{:,.2f}".format(cart_total) }}</span>
+                    </div>
+                </div>
+
+                <div class="payment-panel">
+                    <h2>Payment Details</h2>
+                    <form method="POST" id="checkout-form">
+                        <div class="payment-type">
+                            <label><input type="radio" name="payment_method" value="credit" checked> Credit Card</label>
+                            <label><input type="radio" name="payment_method" value="debit"> Debit Card</label>
+                        </div>
+                        <div class="field">
+                            <label for="card_name">Name on Card</label>
+                            <input type="text" id="card_name" name="card_name" placeholder="John Smith" required>
+                        </div>
+                        <div class="field">
+                            <label for="card_number">Card Number</label>
+                            <input type="text" id="card_number" name="card_number"
+                                   placeholder="1234 5678 9012 3456" maxlength="19"
+                                   inputmode="numeric" autocomplete="cc-number" required>
+                        </div>
+                        <div class="field-row">
+                            <div class="field">
+                                <label for="expiry">Expiry</label>
+                                <input type="text" id="expiry" name="expiry"
+                                       placeholder="MM/YY" maxlength="5"
+                                       inputmode="numeric" autocomplete="cc-exp" required>
+                            </div>
+                            <div class="field">
+                                <label for="cvv">CVV</label>
+                                <input type="text" id="cvv" name="cvv"
+                                       placeholder="&bull;&bull;&bull;" maxlength="4"
+                                       inputmode="numeric" autocomplete="cc-csc" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="pay-btn">Pay ${{ "{:,.2f}".format(cart_total) }}</button>
+                    </form>
+                </div>
+            </div>
+
+        {% else %}
+            <div class="empty-notice">
+                <h2>Your cart is empty</h2>
+                <p>Add a vehicle before proceeding to checkout.</p>
+                <a class="checkout-action" href="{{ url_for('productList.products') }}" style="display:inline-block;margin-top:20px;">Browse Cars</a>
+            </div>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Card number: auto-insert a space after every 4 digits
+    const cardInput = document.getElementById("card_number");
+    if (cardInput) {
+        cardInput.addEventListener("input", function (e) {
+            let raw = this.value.replace(/\D/g, "").slice(0, 16);
+            this.value = raw.match(/.{1,4}/g)?.join(" ") ?? raw;
+        });
+        // Prevent non-numeric keys (allow backspace, arrows, tab)
+        cardInput.addEventListener("keydown", function (e) {
+            if (!/^\d$/.test(e.key) && !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // Expiry: auto-insert '/' after 2 digits, restrict to MM/YY
+    const expiryInput = document.getElementById("expiry");
+    if (expiryInput) {
+        expiryInput.addEventListener("input", function (e) {
+            let raw = this.value.replace(/\D/g, "").slice(0, 4);
+            if (raw.length >= 3) {
+                this.value = raw.slice(0, 2) + "/" + raw.slice(2);
+            } else {
+                this.value = raw;
+            }
+        });
+        expiryInput.addEventListener("keydown", function (e) {
+            if (!/^\d$/.test(e.key) && !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // CVV: digits only
+    const cvvInput = document.getElementById("cvv");
+    if (cvvInput) {
+        cvvInput.addEventListener("keydown", function (e) {
+            if (!/^\d$/.test(e.key) && !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+    }
+</script>
+{% endblock %}

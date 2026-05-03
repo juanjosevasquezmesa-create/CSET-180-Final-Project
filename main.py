@@ -11,13 +11,12 @@ from backend.cart import cart_bp
 from backend.cartPage import cart_page_bp
 from backend.cartToOrder import cartToOrder_bp
 from backend.chat import chat_bp
-from backend.vendorAccount import vendor_Account_bp
-from backend.vendorAdd import productAdd_bp
-from backend.vendorDelete import productDel_bp
-from backend.vendorEdit import productEdit_bp
 from backend.adminAccount import admin_account_bp
 from backend.customerAccount import customer_account_bp
-from backend.vendorAccount import vendor_account_bp
+from backend.customerOrders import customer_orders_bp
+from backend.vendorAccount import vendor_Account_bp
+from backend.vendorProduct import vendor_Product_bp
+from backend.checkout import checkout_bp
 
 app = Flask(__name__)
 # Now you can access variables like this:
@@ -41,7 +40,11 @@ app.register_blueprint(vendor_Account_bp)
 # app.register_blueprint(productAdd_bp)
 # app.register_blueprint(productDel_bp)
 # app.register_blueprint(productEdit_bp)
-app.register_blueprint(vendorProduct_bp)
+app.register_blueprint(vendor_Product_bp)
+app.register_blueprint(customer_account_bp)
+app.register_blueprint(customer_orders_bp)
+app.register_blueprint(admin_account_bp)
+app.register_blueprint(checkout_bp)
 if __name__ == "__main__":
     app.run(debug=True)
 

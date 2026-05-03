@@ -28,13 +28,15 @@
                 <div class="links">
                     <a href="{{ url_for('index.index') }}#home">Home</a>
                     <a href="/products">Browse Cars</a>
-                    <a href="/cart">Cart</a>
+                    {% if session.get("role") == "customer" %}
+                        <a href="/cart">Cart</a>
+                    {% endif %}
                     <a href="{{ url_for('index.index') }}#contact">Contact</a>
-                    {% if session %}
-                        <a href="/account/{{session.role}}">Account</a>
+                    {% if session.get("role") %}
+                        <a href="/account/{{ session.get("role") }}">Account</a>
                     {% endif %}
                 </div>
-                {% if session %}
+                {% if session.get("role") %}
                     <div class="nav-btns">
                         <a class="cta" href="/logout">Log Out</a>
                     </div>
@@ -50,6 +52,7 @@
     </header>
     <button class="menu-backdrop" type="button" aria-label="Close navigation menu"></button>
     
+    {% if session.get("role") == "customer" %}
     <!-- Cart Popup -->
     <div id="cart-popup" class="popup cart-popup hidden">
         <div class="popup-content">
@@ -65,7 +68,9 @@
             </div>
         </div>
     </div>
+    {% endif %}
     
+    {% if session.get("role") %}
     <!-- Chat/Complaint Popup -->
     <div id="chat-popup" class="popup chat-popup hidden">
         <div class="popup-content">
@@ -81,7 +86,9 @@
             <button id="chat-close-btn" class="popup-close-btn">✕</button>
         </div>
     </div>
+    {% endif %}
     
+    {% if session.get("role") %}
     <!-- Float Buttons -->
     <div class="float-buttons">
         <button id="chat-toggle-btn" class="float-btn chat-btn" title="Support Chat">
@@ -89,14 +96,17 @@
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
         </button>
-        <button id="cart-toggle-btn" class="float-btn cart-btn" title="Shopping Cart">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-        </button>
+        {% if session.get("role") == "customer" %}
+            <button id="cart-toggle-btn" class="float-btn cart-btn" title="Shopping Cart">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </button>
+        {% endif %}
     </div>
+    {% endif %}
     
     {% block body %}{% endblock %}
     <script src="{{ url_for('static', filename='js/cart_chat_float.js') }}"></script>

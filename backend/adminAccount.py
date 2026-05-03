@@ -13,7 +13,7 @@ admin_account_bp = Blueprint("admin_account", __name__, url_prefix="/account/")
 def admin_account():
     """Dashboard with dynamic views based on ?view parameter"""
     if not session or session.get("role") != "admin":
-        return redirect(url_for("login.login_page"))
+        return redirect(url_for("login.login"))
     
     view = request.args.get("view", "dashboard")
     if view == "warranty":
@@ -90,7 +90,7 @@ def admin_account():
 def update_complaint_status(complaint_id):
     """Update complaint status and assign handler"""
     if not session or session.get("role") != "admin":
-        return redirect(url_for("login.login_page"))
+        return redirect(url_for("login.login"))
     
     new_status = request.form.get("status")
     
@@ -121,7 +121,7 @@ def update_complaint_status(complaint_id):
 def verify_vendor(vendor_id):
     """Toggle vendor verification status"""
     if not session or session.get("role") != "admin":
-        return redirect(url_for("login.login_page"))
+        return redirect(url_for("login.login"))
     
     try:
         with Session(engine) as session_db:

@@ -21,7 +21,7 @@
             <div class="overlay"></div>
             <div class="content">
                 <p class="tag">Private Luxury Automotive Sales</p>
-                <h1>Drive a statement, not just a car{% if session %}, {{ name|title }}{% endif %}.</h1>
+                <h1>Drive a statement, not just a car{% if session.get("user_id") and name %}, {{ name|title }}{% endif %}.</h1>
                 <p class="text">
                     Discover handpicked supercars and rare collector vehicles
                     presented to you through a top of the line buying experience.

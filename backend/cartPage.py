@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, session, url_for
+from flask import Blueprint, flash, redirect, render_template, session, url_for
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
@@ -13,6 +13,10 @@ def view_cart():
     if "user_id" not in session:
         return redirect(url_for("login.login"))
 
+    if session.get("role") != "customer":
+        flash("Only customer accounts can view the cart.", "error")
+        return redirect(url_for("index.index"))
+
     with Session(engine) as session_db:
         cart_items = session_db.scalars(
             select(CartItem)
@@ -23,13 +27,23 @@ def view_cart():
             .order_by(CartItem.cart_item_id)
         ).all()
 
-        subtotal = sum(
-            float(item.variation.product.price) * item.quantity for item in cart_items
-        )
+        visible_cart_items = []
+        subtotal = 0
+
+        for item in cart_items:
+            if not item.variation.product:
+                session_db.delete(item)
+                continue
+
+            visible_cart_items.append(item)
+            subtotal += float(item.variation.product.price) * item.quantity
+
+        if len(visible_cart_items) != len(cart_items):
+            session_db.commit()
 
     return render_template(
         "cart.html",
-        cart_items=cart_items,
+        cart_items=visible_cart_items,
         subtotal=subtotal,
         session=session,
     )
