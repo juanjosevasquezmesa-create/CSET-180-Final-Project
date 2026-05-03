@@ -31,7 +31,7 @@
                     <a href="/cart">Cart</a>
                     <a href="{{ url_for('index.index') }}#contact">Contact</a>
                     {% if session %}
-                        <a href="/account/{{session.role}}">Account</a>
+                        <a href="{{ url_for('vendor_account.account_home') }}">Account</a>
                     {% endif %}
                 </div>
                 {% if session %}

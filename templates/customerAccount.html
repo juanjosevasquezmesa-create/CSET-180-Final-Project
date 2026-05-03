@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/account.css') }}">
+{% endblock %}
+
+{% block title %}Customer Account | Lux Auto{% endblock %}
+
+{% block body %}
+    <main class="account-page">
+        <section class="account-shell">
+            <div class="account-heading">
+                <p class="account-kicker">Customer</p>
+                <h1>{{ user.name }}</h1>
+                <p>{{ user.email }}</p>
+            </div>
+
+            <section class="account-panel">
+                <h2>Your Orders</h2>
+                {% if orders %}
+                    <div class="account-list">
+                        {% for order in orders %}
+                            <article class="account-row">
+                                <div>
+                                    <h3>Order #{{ order.order_id }}</h3>
+                                    <p>{{ order.order_date }} - {{ order.status|title }}</p>
+                                </div>
+                                <div class="account-actions">
+                                    <strong>${{ "{:,.2f}".format(order.total_price) }}</strong>
+                                    <a class="btn alt-btn" href="{{ url_for('customer_orders.order_details', order_id=order.order_id) }}">View</a>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="empty-copy">You do not have any orders yet.</p>
+                    <a class="btn main-btn" href="/products">Browse Cars</a>
+                {% endif %}
+            </section>
+        </section>
+    </main>
+{% endblock %}

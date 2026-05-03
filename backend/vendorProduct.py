@@ -104,7 +104,7 @@ def productAdd():
         session_db.commit()
 
     flash("Product added successfully.", "success")
-    return redirect(url_for("vAccount.vendorAcc"))
+    return redirect(url_for("vendor_account.vendor_account"))
 
 @vendorProduct_bp.route("<int:product_id>/delete", methods=["GET"])
 def productDelConfirm(product_id):
@@ -173,7 +173,7 @@ def productDel(product_id):
         session_db.commit()
         flash("Product deleted successfully.", "success")
         
-        return redirect(url_for("vAccount.vendorAcc"))
+        return redirect(url_for("vendor_account.vendor_account"))
 
 @vendorProduct_bp.route("<int:product_id>/edit", methods=["GET", "POST"])
 def productEdit(product_id):
@@ -277,4 +277,4 @@ def productEdit(product_id):
 
         session_db.commit()
         flash("Product updated successfully.", "success")
-        return redirect(url_for("vAccount.vendorAcc"))
+        return redirect(url_for("vendor_account.vendor_account"))

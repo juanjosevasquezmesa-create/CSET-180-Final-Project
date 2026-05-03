@@ -75,4 +75,4 @@ def productDel(product_id):
         session_db.commit()
         flash("Product deleted successfully.", "success")
         
-        return redirect(url_for("vAccount.vendorAcc"))
+        return redirect(url_for("vendor_account.vendor_account"))

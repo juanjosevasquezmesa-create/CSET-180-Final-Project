@@ -29,6 +29,7 @@ def order_details(order_id):
                 "model": product.model,
                 "quantity": item.quantity,
                 "price": item.price,
+                "line_total": float(item.price) * item.quantity,
                 "variation": f"{item.variation.color} {item.variation.year}"
             })
 

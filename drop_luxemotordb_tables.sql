@@ -27,4 +27,4 @@ DROP TABLE IF EXISTS roles;
 SET FOREIGN_KEY_CHECKS = 1;
 
 
--- Select * from users;
+Select * from users;

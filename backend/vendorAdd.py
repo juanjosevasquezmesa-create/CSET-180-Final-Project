@@ -106,4 +106,4 @@ def productAdd():
         session_db.commit()
 
     flash("Product added successfully.", "success")
-    return redirect(url_for("vAccount.vendorAcc"))
+    return redirect(url_for("vendor_account.vendor_account"))

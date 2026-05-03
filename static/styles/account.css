@@ -1,0 +1,157 @@
+.account-page {
+    min-height: 100vh;
+    padding: 150px 24px 72px;
+    background:
+        linear-gradient(180deg, rgba(8, 8, 7, 0.48) 0%, rgba(8, 8, 7, 0.68) 100%),
+        radial-gradient(circle at 15% 18%, rgba(240, 223, 187, 0.14), transparent 28%),
+        url("../images/showroom.png");
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.account-shell {
+    width: min(1180px, 100%);
+    margin: 0 auto;
+}
+
+.account-heading,
+.account-panel,
+.account-stat {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(10, 10, 9, 0.74);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+}
+
+.account-heading {
+    padding: 34px;
+    margin-bottom: 22px;
+}
+
+.account-kicker {
+    margin: 0 0 10px;
+    color: #f0dfbb;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.account-heading h1,
+.account-panel h2 {
+    margin: 0;
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 600;
+}
+
+.account-heading h1 {
+    font-size: clamp(3rem, 7vw, 5rem);
+    line-height: 0.94;
+}
+
+.account-heading p,
+.empty-copy,
+.account-row p {
+    color: rgba(247, 241, 230, 0.72);
+}
+
+.account-panel {
+    padding: 28px;
+}
+
+.account-panel h2 {
+    font-size: 2.1rem;
+}
+
+.account-list {
+    display: grid;
+    gap: 14px;
+    margin: 22px 0;
+}
+
+.account-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.18);
+}
+
+.account-row h3,
+.account-row p {
+    margin: 0;
+}
+
+.account-row h3 {
+    margin-bottom: 6px;
+}
+
+.account-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.account-actions span {
+    color: rgba(247, 241, 230, 0.68);
+}
+
+.account-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin: 6px 0 22px;
+    padding: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    color: #f0dfbb;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.account-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.account-stat {
+    padding: 24px;
+}
+
+.account-stat span {
+    display: block;
+    color: rgba(247, 241, 230, 0.62);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.account-stat strong {
+    display: block;
+    margin-top: 12px;
+    color: #f0dfbb;
+    font-size: 2.4rem;
+}
+
+@media (max-width: 760px) {
+    .account-page {
+        padding: 124px 14px 42px;
+    }
+
+    .account-grid,
+    .account-row {
+        grid-template-columns: 1fr;
+    }
+
+    .account-row,
+    .account-actions {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
