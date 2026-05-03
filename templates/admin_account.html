@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/account.css') }}">
+{% endblock %}
+
+{% block title %}Admin Account | Lux Auto{% endblock %}
+
+{% block body %}
+    <main class="account-page">
+        <section class="account-shell">
+            <div class="account-heading">
+                <p class="account-kicker">Admin</p>
+                <h1>Dashboard</h1>
+                {% if error %}
+                    <p>{{ error }}</p>
+                {% else %}
+                    <p>Review complaints and vendor verification.</p>
+                {% endif %}
+            </div>
+
+            <section class="account-grid">
+                <article class="account-stat">
+                    <span>Total Complaints</span>
+                    <strong>{{ total_complaints or 0 }}</strong>
+                </article>
+                <article class="account-stat">
+                    <span>Warranty Claims</span>
+                    <strong>{{ total_warranty_claims or 0 }}</strong>
+                </article>
+                <article class="account-stat">
+                    <span>Pending Vendors</span>
+                    <strong>{{ total_pending_vendors or 0 }}</strong>
+                </article>
+            </section>
+        </section>
+    </main>
+{% endblock %}

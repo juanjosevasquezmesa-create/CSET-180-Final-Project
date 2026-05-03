@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/account.css') }}">
+{% endblock %}
+
+{% block title %}Order Details | Lux Auto{% endblock %}
+
+{% block body %}
+    <main class="account-page">
+        <section class="account-shell">
+            <div class="account-heading">
+                <p class="account-kicker">Order Details</p>
+                <h1>Order #{{ order.order_id }}</h1>
+                <p>{{ order.order_date }} - {{ order.status|title }}</p>
+            </div>
+
+            <section class="account-panel">
+                <h2>Items</h2>
+                <div class="account-list">
+                    {% for item in order["items"] %}
+                        <article class="account-row">
+                            <div>
+                                <h3>{{ item.model }}</h3>
+                                <p>{{ item.variation }} - Quantity {{ item.quantity }}</p>
+                            </div>
+                            <div class="account-actions">
+                                <span>${{ "{:,.2f}".format(item.price) }} each</span>
+                                <strong>${{ "{:,.2f}".format(item.line_total) }}</strong>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+                <div class="account-total">
+                    <span>Total</span>
+                    <strong>${{ "{:,.2f}".format(order.total_price) }}</strong>
+                </div>
+                <a class="btn alt-btn" href="{{ url_for('customer_account.customer_account') }}">Back to Account</a>
+            </section>
+        </section>
+    </main>
+{% endblock %}

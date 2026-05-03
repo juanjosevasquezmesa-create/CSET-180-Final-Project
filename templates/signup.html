@@ -22,10 +22,21 @@
                 </div>
             </div>
 
-            <div class="auth-card signup-container">
+                        <div class="auth-card signup-container">
+                                {% with messages = get_flashed_messages(with_categories=true) %}
+                                    {% if messages %}
+                                        {% for category, message in messages %}
+                                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
                 <p class="card-kicker">Register</p>
                 <h2>Create Your Account</h2>
                 <form class="auth-form" method="POST" action="{{ url_for('signup.signup') }}">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter Name" required>
+                    </div>                    
                     <div class="form-group">
                         <label for="username">Username</label>
                         <input type="text" id="username" name="username" placeholder="Choose a username" required>
@@ -33,6 +44,14 @@
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <select id="role" name="role" required>
+                            <option value="" disabled selected>Select your role</option>
+                            <option value="customer">Customer</option>
+                            <option value="vendor">Vendor</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>

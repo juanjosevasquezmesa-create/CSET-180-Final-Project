@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/vendor.css') }}">
+{% endblock %}
+
+{% block title %}Add Product | Lux Auto{% endblock %}
+
+{% block body %}
+    <main class="vendor-page">
+        <section class="vendor-form-shell">
+            <div class="vendor-form-header">
+                <p class="tag">Vendor Inventory</p>
+                <h1>Add Product</h1>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-list" aria-live="polite">
+                        {% for category, message in messages %}
+                            <p class="flash-message {{ category }}">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form class="vendor-form" method="POST">
+                <section class="form-band">
+                    <label class="vendor-field wide">
+                        <span>Model</span>
+                        <textarea name="model" rows="2" placeholder="Apex S Touring" required></textarea>
+                    </label>
+
+                    <label class="vendor-field wide">
+                        <span>Description</span>
+                        <textarea name="description" rows="3" placeholder="Luxury sport sedan with adaptive suspension and premium interior."></textarea>
+                    </label>
+
+                    <div class="two-column">
+                        <label class="vendor-field">
+                            <span>Warranty Period</span>
+                            <input type="text" name="warranty_period" placeholder="48 months">
+                        </label>
+
+                        <label class="vendor-field">
+                            <span>Price</span>
+                            <input type="number" name="price" min="0" step="0.01" placeholder="58999.99" required>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="form-band">
+                    <div class="section-title-row">
+                        <h2>Product Variations</h2>
+                        <button class="ghost-btn" id="add-variation" type="button">Add Variation</button>
+                    </div>
+
+                    <div class="add-variation-list" id="variation-list">
+                        <div class="add-variation-row">
+                            <label class="vendor-field">
+                                <span>Color</span>
+                                <input type="text" name="color" placeholder="Obsidian Black">
+                            </label>
+
+                            <label class="vendor-field">
+                                <span>Year</span>
+                                <input type="text" name="year" maxlength="4" placeholder="2024">
+                            </label>
+
+                            <label class="vendor-field">
+                                <span>Stock</span>
+                                <input type="number" name="stock" min="0" step="1" placeholder="4">
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="vendor-form-actions">
+                    <a class="btn alt-btn" href="{{ url_for('vendor_account.vendor_account') }}">Cancel</a>
+                    <button class="btn main-btn" type="submit">Add Product</button>
+                </div>
+            </form>
+        </section>
+    </main>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        window.addEventListener("load", () => {
+            const addButton = document.getElementById("add-variation");
+            const variationList = document.getElementById("variation-list");
+            const menuToggle = document.querySelector(".menu-toggle");
+            const navPanel = document.querySelector(".nav-panel");
+            const menuBackdrop = document.querySelector(".menu-backdrop");
+
+            if (addButton && variationList) {
+                addButton.addEventListener("click", () => {
+                    const row = document.createElement("div");
+                    row.className = "add-variation-row removable";
+                    row.innerHTML = `
+                        <label class="vendor-field">
+                            <span>Color</span>
+                            <input type="text" name="color" placeholder="Graphite Gray">
+                        </label>
+
+                        <label class="vendor-field">
+                            <span>Year</span>
+                            <input type="text" name="year" maxlength="4" placeholder="2025">
+                        </label>
+
+                        <label class="vendor-field">
+                            <span>Stock</span>
+                            <input type="number" name="stock" min="0" step="1" placeholder="2">
+                        </label>
+
+                        <button class="remove-row" type="button">Remove</button>
+                    `;
+                    variationList.appendChild(row);
+                });
+
+                variationList.addEventListener("click", (event) => {
+                    if (event.target.classList.contains("remove-row")) {
+                        event.target.closest(".add-variation-row").remove();
+                    }
+                });
+            }
+
+            if (menuToggle && navPanel) {
+                const closeMenu = () => {
+                    menuToggle.setAttribute("aria-expanded", "false");
+                    navPanel.classList.remove("is-open");
+                    document.body.classList.remove("menu-open");
+                };
+
+                menuToggle.addEventListener("click", () => {
+                    const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
+                    menuToggle.setAttribute("aria-expanded", String(!isOpen));
+                    navPanel.classList.toggle("is-open", !isOpen);
+                    document.body.classList.toggle("menu-open", !isOpen);
+                });
+
+                navPanel.querySelectorAll("a").forEach((link) => {
+                    link.addEventListener("click", closeMenu);
+                });
+
+                if (menuBackdrop) {
+                    menuBackdrop.addEventListener("click", closeMenu);
+                }
+
+                window.addEventListener("resize", () => {
+                    if (window.innerWidth > 640) {
+                        closeMenu();
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

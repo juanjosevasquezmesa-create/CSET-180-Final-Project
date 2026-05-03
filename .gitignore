@@ -1,2 +1,13 @@
 .env
 .env.local
+
+__pycache__/
+backend/__pycache__/
+
+notes.txt
+
+testOrder.py
+testOrder copy.py
+test.py
+
+alter_product_var_set_null.sql

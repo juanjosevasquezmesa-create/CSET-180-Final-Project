@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/vendorEdit.css') }}">
+{% endblock %}
+
+{% block title %}Edit {{ product.model }} | Lux Auto{% endblock %}
+
+{% block body %}
+    <main class="edit-page">
+        <section class="edit-header">
+            <p class="tag">Vendor Inventory</p>
+            <h1>Edit {{ product.model }}</h1>
+        </section>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-list" aria-live="polite">
+                    {% for category, message in messages %}
+                        <p class="flash-message {{ category }}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form class="edit-form" method="POST">
+            <section class="form-section">
+                <div class="section-heading">
+                    <h2>Product Details</h2>
+                </div>
+
+                <div class="form-grid">
+                    <label class="field">
+                        <span>Model</span>
+                        <input type="text" name="model" value="{{ product.model }}" required>
+                    </label>
+
+                    <label class="field">
+                        <span>Warranty Period</span>
+                        <input
+                            type="text"
+                            name="warranty_period"
+                            value="{{ product.warranty_period or '' }}"
+                            placeholder="48 months"
+                        >
+                    </label>
+
+                    <label class="field">
+                        <span>Price</span>
+                        <input
+                            type="number"
+                            name="price"
+                            value="{{ '%.2f'|format(product.price) }}"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+                    </label>
+
+                    <label class="field wide">
+                        <span>Description</span>
+                        <textarea name="description" rows="5">{{ product.description or '' }}</textarea>
+                    </label>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <div class="section-heading split">
+                    <h2>Variations</h2>
+                    <button class="ghost-btn" id="add-variation" type="button">Add Variation</button>
+                </div>
+
+                <div class="variation-list" id="variation-list">
+                    {% for variation in product.variations %}
+                        <div class="variation-row">
+                            <label class="check-field">
+                                <input
+                                    type="checkbox"
+                                    name="selected_variations"
+                                    value="{{ variation.var_id }}"
+                                    checked
+                                >
+                                <span>Active</span>
+                            </label>
+
+                            <label class="field compact">
+                                <span>Color</span>
+                                <input
+                                    type="text"
+                                    name="color_{{ variation.var_id }}"
+                                    value="{{ variation.color }}"
+                                >
+                            </label>
+
+                            <label class="field compact">
+                                <span>Year</span>
+                                <input
+                                    type="text"
+                                    name="year_{{ variation.var_id }}"
+                                    value="{{ variation.year }}"
+                                    maxlength="4"
+                                >
+                            </label>
+
+                            <label class="field compact">
+                                <span>Stock</span>
+                                <input
+                                    type="number"
+                                    name="stock_{{ variation.var_id }}"
+                                    value="{{ variation.stock }}"
+                                    min="0"
+                                    step="1"
+                                >
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <div class="form-actions">
+                <a class="btn alt-btn" href="{{ url_for('vendor_account.vendor_account') }}">Cancel</a>
+                <button class="btn main-btn" type="submit">Save Changes</button>
+            </div>
+        </form>
+    </main>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        window.addEventListener("load", () => {
+            const addButton = document.getElementById("add-variation");
+            const variationList = document.getElementById("variation-list");
+            const menuToggle = document.querySelector(".menu-toggle");
+            const navPanel = document.querySelector(".nav-panel");
+            const menuBackdrop = document.querySelector(".menu-backdrop");
+
+            if (addButton && variationList) {
+                addButton.addEventListener("click", () => {
+                    const row = document.createElement("div");
+                    row.className = "variation-row new-row";
+                    row.innerHTML = `
+                        <span class="new-label">New</span>
+
+                        <label class="field compact">
+                            <span>Color</span>
+                            <input type="text" name="new_color" placeholder="Graphite Gray">
+                        </label>
+
+                        <label class="field compact">
+                            <span>Year</span>
+                            <input type="text" name="new_year" placeholder="2024" maxlength="4">
+                        </label>
+
+                        <label class="field compact">
+                            <span>Stock</span>
+                            <input type="number" name="new_stock" min="0" step="1" placeholder="3">
+                        </label>
+
+                        <button class="remove-row" type="button" aria-label="Remove variation">Remove</button>
+                    `;
+                    variationList.appendChild(row);
+                });
+
+                variationList.addEventListener("click", (event) => {
+                    if (event.target.classList.contains("remove-row")) {
+                        event.target.closest(".variation-row").remove();
+                    }
+                });
+            }
+
+            if (menuToggle && navPanel) {
+                const closeMenu = () => {
+                    menuToggle.setAttribute("aria-expanded", "false");
+                    navPanel.classList.remove("is-open");
+                    document.body.classList.remove("menu-open");
+                };
+
+                menuToggle.addEventListener("click", () => {
+                    const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
+                    menuToggle.setAttribute("aria-expanded", String(!isOpen));
+                    navPanel.classList.toggle("is-open", !isOpen);
+                    document.body.classList.toggle("menu-open", !isOpen);
+                });
+
+                navPanel.querySelectorAll("a").forEach((link) => {
+                    link.addEventListener("click", closeMenu);
+                });
+
+                if (menuBackdrop) {
+                    menuBackdrop.addEventListener("click", closeMenu);
+                }
+
+                window.addEventListener("resize", () => {
+                    if (window.innerWidth > 640) {
+                        closeMenu();
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

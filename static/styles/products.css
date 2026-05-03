@@ -1,0 +1,374 @@
+.products-page {
+    min-height: 100vh;
+    padding: 150px 24px 72px;
+    background:
+        linear-gradient(180deg, rgba(8, 8, 7, 0.48) 0%, rgba(8, 8, 7, 0.68) 100%),
+        radial-gradient(circle at 12% 18%, rgba(240, 223, 187, 0.12), transparent 28%),
+        url("../images/showroom.png");
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.products-hero,
+.products-list {
+    width: 100%;
+    max-width: 1420px;
+    margin: 0 auto;
+}
+
+.products-hero {
+    padding-bottom: 38px;
+}
+
+.products-hero h1,
+.car-name h2,
+.empty-state h2 {
+    font-family: "Cormorant Garamond", serif;
+}
+
+.products-hero h1 {
+    margin: 0;
+    font-size: clamp(3rem, 7vw, 5.8rem);
+    line-height: 0.95;
+    font-weight: 600;
+}
+
+.products-intro {
+    max-width: 680px;
+    margin: 18px 0 0;
+    color: rgba(247, 241, 230, 0.76);
+    font-size: 1.02rem;
+    line-height: 1.8;
+}
+
+.products-list {
+    display: grid;
+    gap: 28px;
+}
+
+.car-card {
+    min-height: 430px;
+    perspective: 1600px;
+    outline: none;
+}
+
+.car-card-inner {
+    position: relative;
+    min-height: inherit;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.7s ease;
+}
+
+.car-card:hover .car-card-inner,
+.car-card:focus .car-card-inner,
+.car-card:focus-within .car-card-inner {
+    transform: rotateX(180deg);
+}
+
+.car-face {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.045);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+}
+
+.car-media {
+    position: relative;
+    min-height: 360px;
+    display: grid;
+    align-items: end;
+    overflow: hidden;
+    background:
+        linear-gradient(145deg, rgba(240, 223, 187, 0.03), rgba(12, 12, 11, 0.18)),
+        var(--car-image, linear-gradient(45deg, #232321, #0f0f0e)),
+        linear-gradient(45deg, #232321, #0f0f0e);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.car-back {
+    transform: rotateX(180deg);
+    background:
+        linear-gradient(180deg, rgba(10, 10, 9, 0.46), rgba(10, 10, 9, 0.66)),
+        linear-gradient(110deg, rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.08) 58%, rgba(0, 0, 0, 0.34)),
+        url("https://images.unsplash.com/photo-1529186405194-c57220dec7c0?auto=format&fit=crop&w=1800&q=85");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.car-media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.car-media::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: 1;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at center, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.38) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.24) 42%, rgba(0, 0, 0, 0.82) 100%),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.18) 58%, rgba(0, 0, 0, 0.38) 100%);
+}
+
+.car-placeholder {
+    position: absolute;
+    inset: 0;
+}
+
+.car-name {
+    position: relative;
+    z-index: 2;
+    padding: 28px;
+}
+
+.car-name p {
+    margin: 0 0 8px;
+    color: #f0dfbb;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.car-name h2 {
+    max-width: 520px;
+    margin: 0;
+    font-size: clamp(2.3rem, 4vw, 4rem);
+    line-height: 0.96;
+    font-weight: 600;
+}
+
+.car-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 22px;
+    padding: 34px;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.car-details::-webkit-scrollbar {
+    display: none;
+}
+
+.detail-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.price {
+    color: #f0dfbb;
+    font-size: clamp(1.8rem, 3vw, 2.7rem);
+    font-weight: 800;
+}
+
+.vendor {
+    padding: 9px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    color: rgba(247, 241, 230, 0.78);
+    background: rgba(0, 0, 0, 0.18);
+    font-size: 0.86rem;
+}
+
+.description {
+    margin: 0;
+    color: rgba(247, 241, 230, 0.78);
+    line-height: 1.75;
+}
+
+.spec-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 0;
+}
+
+.spec-grid div {
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.18);
+}
+
+.spec-grid dt,
+.variants h3 {
+    margin: 0 0 8px;
+    color: rgba(247, 241, 230, 0.58);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.spec-grid dd {
+    margin: 0;
+    color: #f7f1e6;
+    font-weight: 700;
+}
+
+.add-cart-btn {
+    width: fit-content;
+    min-height: 48px;
+    margin-top: 28px;
+    align-self: flex-end;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #f0dfbb, #cfb37c);
+    color: #151311;
+    font: inherit;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.add-cart-btn:hover,
+.add-cart-btn:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(207, 179, 124, 0.2);
+    outline: none;
+}
+
+.variants h3 {
+    margin-bottom: 12px;
+}
+
+.variant-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.variant-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    background: rgba(240, 223, 187, 0.1);
+    color: rgba(247, 241, 230, 0.86);
+    font-size: 0.86rem;
+}
+
+.variant-chip strong {
+    color: #f0dfbb;
+    font-size: 0.78rem;
+}
+
+.empty-state {
+    padding: 56px 28px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.045);
+    text-align: center;
+}
+
+.empty-state h2 {
+    margin: 0;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 600;
+}
+
+.empty-state p {
+    margin: 14px auto 0;
+    max-width: 520px;
+    color: rgba(247, 241, 230, 0.74);
+    line-height: 1.7;
+}
+
+@media (max-width: 900px) {
+    .products-page {
+        padding: 132px 18px 56px;
+    }
+
+    .car-card {
+        min-height: 430px;
+    }
+
+    .car-media {
+        min-height: 100%;
+    }
+}
+
+
+@media (max-width: 640px) {
+    body.menu-open .products-page {
+        visibility: hidden;
+    }
+
+    .products-page {
+        padding: 124px 14px 42px;
+    }
+
+    .products-hero {
+        text-align: center;
+        padding-bottom: 28px;
+    }
+
+    .products-intro {
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 0.96rem;
+    }
+
+    .products-list {
+        gap: 20px;
+    }
+
+    .car-card {
+        min-height: 520px;
+    }
+
+    .car-card-inner,
+    .car-media {
+        min-height: 100%;
+    }
+
+    .car-name,
+    .car-details {
+        padding: 22px;
+    }
+
+    .detail-topline {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .spec-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .add-cart-btn {
+        width: 100%;
+        align-self: stretch;
+    }
+
+    .variant-chip {
+        width: 100%;
+        justify-content: space-between;
+        border-radius: 8px;
+    }
+}
