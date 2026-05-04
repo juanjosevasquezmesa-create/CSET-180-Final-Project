@@ -2,9 +2,9 @@ from flask import Blueprint, flash, redirect, render_template, session, url_for
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from .models import Product, engine
+from .models import Product, User, engine
 
-vendor_Account_bp = Blueprint("vAccount", __name__, url_prefix="/account/")
+vendor_account_bp = Blueprint("vAccount", __name__, url_prefix="/account/")
 
 
 @vendor_account_bp.route("", methods=["GET"])
