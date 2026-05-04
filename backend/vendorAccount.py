@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from .models import Product, User, engine
 
-vendor_account_bp = Blueprint("vendor_account", __name__, url_prefix="/account/")
+vendor_Account_bp = Blueprint("vAccount", __name__, url_prefix="/account/")
 
 
 @vendor_account_bp.route("", methods=["GET"])

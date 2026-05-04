@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let activeComplaints = JSON.parse(sessionStorage.getItem('activeComplaints')) || [];
     
     // Cart Toggle
-    if (cartToggleBtn) {
+    if (cartToggleBtn && cartPopup) {
         cartToggleBtn.addEventListener('click', function() {
             cartPopup.classList.toggle('hidden');
             if (!cartPopup.classList.contains('hidden')) {
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Chat Toggle
-    if (chatToggleBtn) {
+    if (chatToggleBtn && chatPopup) {
         chatToggleBtn.addEventListener('click', function() {
             if (activeComplaints.length === 0) {
                 displayChatMessage('No active chats. Open a complaint from your account or order details page.');
@@ -121,9 +121,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update chat bubble visibility
     function updateChatBubbleVisibility() {
         if (activeComplaints.length > 0) {
-            chatToggleBtn.style.display = 'flex';
+            if (chatToggleBtn) chatToggleBtn.style.display = 'flex';
         } else {
-            chatToggleBtn.style.display = 'none';
+            if (chatToggleBtn) chatToggleBtn.style.display = 'none';
         }
     }
     

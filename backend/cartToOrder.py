@@ -22,6 +22,10 @@ def checkout():
         flash("You must be logged in to checkout.")
         return redirect(url_for("cartPage.view_cart"))
 
+    if session.get("role") != "customer":
+        flash("Only customer accounts can checkout.")
+        return redirect(url_for("index.index"))
+
     with Session(engine) as session_db:
         cart_items = session_db.query(CartItem).filter_by(customer_id=user_id).all()
         if not cart_items:
@@ -30,15 +34,31 @@ def checkout():
 
         total_price = 0
         order_items = []
+        cart_items_to_clear = []
         for item in cart_items:
+            if not item.variation or not item.variation.product:
+                session_db.delete(item)
+                continue
+
+            if item.quantity > item.variation.stock:
+                flash(f"Only {item.variation.stock} of {item.variation.product.model} is available.")
+                return redirect(url_for("cartPage.view_cart"))
+
             # Get price from variation's product
             price = float(item.variation.product.price)
             total_price += price * item.quantity
             order_items.append({
                 "var_id": item.var_id,
                 "quantity": item.quantity,
-                "price": price
+                "price": price,
+                "variation": item.variation,
             })
+            cart_items_to_clear.append(item)
+
+        if not order_items:
+            session_db.commit()
+            flash("Your cart no longer has any available items.")
+            return redirect(url_for("cartPage.view_cart"))
 
         # Create order
         order = Order(customer_id=user_id, total_price=total_price, status="pending")
@@ -54,9 +74,10 @@ def checkout():
                 price=oi["price"]
             )
             session_db.add(order_item)
+            oi["variation"].stock -= oi["quantity"]
 
         # Clear cart
-        for item in cart_items:
+        for item in cart_items_to_clear:
             session_db.delete(item)
 
         session_db.commit()
