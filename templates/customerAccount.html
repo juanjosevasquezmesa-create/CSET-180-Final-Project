@@ -5,39 +5,71 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/account.css') }}">
 {% endblock %}
 
-{% block title %}Customer Account | Lux Auto{% endblock %}
+{% block title %}My Account | Lux Auto{% endblock %}
 
 {% block body %}
-    <main class="account-page">
-        <section class="account-shell">
-            <div class="account-heading">
-                <p class="account-kicker">Customer</p>
-                <h1>{{ user.name }}</h1>
-                <p>{{ user.email }}</p>
-            </div>
+<main class="account-page">
+    <section class="account-shell">
 
-            <section class="account-panel">
-                <h2>Your Orders</h2>
-                {% if orders %}
-                    <div class="account-list">
-                        {% for order in orders %}
-                            <article class="account-row">
-                                <div>
-                                    <h3>Order #{{ order.order_id }}</h3>
-                                    <p>{{ order.order_date }} - {{ order.status|title }}</p>
-                                </div>
-                                <div class="account-actions">
-                                    <strong>${{ "{:,.2f}".format(order.total_price) }}</strong>
-                                    <a class="btn alt-btn" href="{{ url_for('customer_orders.order_details', order_id=order.order_id) }}">View</a>
-                                </div>
-                            </article>
-                        {% endfor %}
+        <div class="account-heading">
+            <div class="account-header-row">
+                <div>
+                    <p class="account-kicker">Customer Account</p>
+                    <h1>My Orders</h1>
+                </div>
+                <a class="account-action-btn" href="{{ url_for('productList.products') }}">Browse Cars</a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-msg {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Account summary card -->
+        <div class="account-header-card">
+            <div class="account-avatar">{{ user.name[0]|upper }}</div>
+            <div class="account-info">
+                <h2>{{ user.name }}</h2>
+                <p>{{ user.email }} &nbsp;&middot;&nbsp; {{ orders|length }} order{{ 's' if orders|length != 1 else '' }}</p>
+            </div>
+        </div>
+
+        <!-- Orders list -->
+        {% if orders %}
+            <div class="orders-panel">
+                <p class="orders-panel-title">Order History</p>
+                {% for order in orders %}
+                    <div class="order-row">
+                        <div>
+                            <div class="order-id-line">
+                                <span class="order-id">Order #{{ order.order_id }}</span>
+                                <span class="status-pill status-{{ order.status }}">
+                                    {{ order.status|replace('_',' ')|title }}
+                                </span>
+                            </div>
+                            <p class="order-meta">{{ order.order_date.strftime("%B %d, %Y") }}</p>
+                            <p class="order-total">${{ "{:,.2f}".format(order.total_price) }}</p>
+                        </div>
+                        <div class="order-actions">
+                            <a class="account-action-btn" href="{{ order.detail_url }}"
+                               style="font-size:0.85rem;min-height:40px;padding:0 18px;">View Details</a>
+                        </div>
                     </div>
-                {% else %}
-                    <p class="empty-copy">You do not have any orders yet.</p>
-                    <a class="btn main-btn" href="/products">Browse Cars</a>
-                {% endif %}
-            </section>
-        </section>
-    </main>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="account-panel" style="text-align:center;padding:54px 28px;">
+                <p class="account-kicker">Nothing here yet</p>
+                <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);margin:0 0 14px;">No orders yet</h2>
+                <p class="empty-copy">Your completed purchases will appear here.</p>
+                <a class="account-action-btn" href="{{ url_for('productList.products') }}">Browse Cars</a>
+            </div>
+        {% endif %}
+
+    </section>
+</main>
 {% endblock %}
