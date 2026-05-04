@@ -2,187 +2,42 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/cart.css') }}">
-    <style>
-        /* Status pills */
-        .status-pill {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 999px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-        }
-        .status-pending { background: rgba(255,193,7,0.14); color: #ffc107; }
-        .status-confirmed { background: rgba(52,199,89,0.12); color: #34c759; }
-        .status-processing { background: rgba(13,110,253,0.14); color: #6ea8fe; }
-        .status-complete, .status-delivered { background: rgba(108,117,125,0.18); color: #adb5bd; }
-        .status-cancelled { background: rgba(220,53,69,0.12); color: #ff8b8b; }
-
-        /* Enhanced cart-row for orders */
-        .order-row {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            align-items: center;
-            gap: 20px;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-        }
-        .order-row:last-child { border-bottom: none; }
-
-        .order-id-line {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 6px;
-        }
-        .order-id {
-            font-family: "Cormorant Garamond", serif;
-            font-size: 1.15rem;
-            font-weight: 600;
-        }
-        .order-meta {
-            font-size: 0.83rem;
-            color: rgba(247,241,230,0.5);
-            margin: 0;
-        }
-        .order-total {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: #f0dfbb;
-            margin-top: 6px;
-        }
-        .order-actions {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 10px;
-        }
-
-        /* Account header card */
-        .account-header-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.09);
-            border-radius: 12px;
-            padding: 24px 28px;
-            margin-bottom: 28px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .account-avatar {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #cfb37c, #b8924a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: "Cormorant Garamond", serif;
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: #0b0b0a;
-            flex-shrink: 0;
-        }
-        .account-info h2 {
-            margin: 0 0 4px;
-            font-family: "Cormorant Garamond", serif;
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-        .account-info p {
-            margin: 0;
-            font-size: 0.83rem;
-            color: rgba(247,241,230,0.5);
-        }
-
-        .orders-panel {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.09);
-            border-radius: 12px;
-            padding: 24px 28px;
-        }
-        .orders-panel-title {
-            font-family: "Cormorant Garamond", serif;
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin: 0 0 20px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .flash-msg {
-            padding: 11px 16px;
-            border-radius: 8px;
-            font-size: 0.88rem;
-            margin-bottom: 16px;
-        }
-        .flash-msg.error { background: rgba(220,53,69,0.12); border: 1px solid rgba(220,53,69,0.3); color: #ff8b8b; }
-        .flash-msg.success { background: rgba(52,199,89,0.1); border: 1px solid rgba(52,199,89,0.3); color: #34c759; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/account.css') }}">
 {% endblock %}
 
-{% block title %}My Account | Lux Auto{% endblock %}
+{% block title %}Customer Account | Lux Auto{% endblock %}
 
 {% block body %}
-<main class="cart-page">
-    <section class="cart-shell" aria-label="Customer account">
-        <div class="cart-heading">
-            <div>
-                <p class="cart-kicker">Customer Account</p>
-                <h1>My Orders</h1>
+    <main class="account-page">
+        <section class="account-shell">
+            <div class="account-heading">
+                <p class="account-kicker">Customer</p>
+                <h1>{{ user.name }}</h1>
+                <p>{{ user.email }}</p>
             </div>
-            <a class="continue-link" href="{{ url_for('productList.products') }}">Browse Cars</a>
-        </div>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-msg {{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <!-- Account summary card -->
-        <div class="account-header-card">
-            <div class="account-avatar">{{ user.name[0]|upper }}</div>
-            <div class="account-info">
-                <h2>{{ user.name }}</h2>
-                <p>{{ user.email }} &nbsp;&middot;&nbsp; {{ orders|length }} order{{ 's' if orders|length != 1 else '' }}</p>
-            </div>
-        </div>
-
-        <!-- Orders list -->
-        {% if orders %}
-            <div class="orders-panel">
-                <p class="orders-panel-title">Order History</p>
-                {% for order in orders %}
-                    <div class="order-row">
-                        <div>
-                            <div class="order-id-line">
-                                <span class="order-id">Order #{{ order.order_id }}</span>
-                                <span class="status-pill status-{{ order.status }}">
-                                    {{ order.status|replace('_',' ')|title }}
-                                </span>
-                            </div>
-                            <p class="order-meta">{{ order.order_date.strftime("%B %d, %Y") }}</p>
-                            <p class="order-total">${{ "{:,.2f}".format(order.total_price) }}</p>
-                        </div>
-                        <div class="order-actions">
-                            <a class="checkout-action" href="{{ order.detail_url }}"
-                               style="font-size:0.85rem;padding:9px 18px;">View Details</a>
-                        </div>
+            <section class="account-panel">
+                <h2>Your Orders</h2>
+                {% if orders %}
+                    <div class="account-list">
+                        {% for order in orders %}
+                            <article class="account-row">
+                                <div>
+                                    <h3>Order #{{ order.order_id }}</h3>
+                                    <p>{{ order.order_date }} - {{ order.status|title }}</p>
+                                </div>
+                                <div class="account-actions">
+                                    <strong>${{ "{:,.2f}".format(order.total_price) }}</strong>
+                                    <a class="btn alt-btn" href="{{ url_for('customer_orders.order_details', order_id=order.order_id) }}">View</a>
+                                </div>
+                            </article>
+                        {% endfor %}
                     </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="empty-cart-state">
-                <h2>No orders yet</h2>
-                <p>Your completed purchases will appear here.</p>
-                <a class="checkout-action" href="{{ url_for('productList.products') }}">Browse Cars</a>
-            </div>
-        {% endif %}
-    </section>
-</main>
+                {% else %}
+                    <p class="empty-copy">You do not have any orders yet.</p>
+                    <a class="btn main-btn" href="/products">Browse Cars</a>
+                {% endif %}
+            </section>
+        </section>
+    </main>
 {% endblock %}
