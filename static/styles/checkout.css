@@ -1,0 +1,69 @@
+/* Checkout page custom styles */
+.container {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #0001;
+    padding: 2rem;
+}
+.checkout-section {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+.cart-summary, .payment-form {
+    flex: 1 1 350px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+.cart-table th, .cart-table td {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: left;
+}
+.cart-total {
+    text-align: right;
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+}
+.input-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+.input-row {
+    display: flex;
+    gap: 1rem;
+}
+.input-group label {
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+}
+.input-group input[type="text"] {
+    padding: 0.5rem;
+    border: 1px solid #bdbdbd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+.btn-primary {
+    background: #2980b9;
+    color: #fff;
+    border: none;
+    padding: 0.7rem 2rem;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background 0.2s;
+}
+.btn-primary:hover {
+    background: #1c5d85;
+}

@@ -66,9 +66,7 @@
                             <strong id="cart-subtotal">${{ "{:,.2f}".format(subtotal) }}</strong>
                         </div>
                         <p class="summary-note">Taxes, delivery, and warranty handling are confirmed at checkout.</p>
-                        <form method="POST" action="/checkout">
-                            <button class="checkout-action" type="submit">Checkout</button>
-                        </form>
+                        <a class="checkout-action" href="{{ url_for('checkout.checkout') }}">Checkout</a>
                     </aside>
                 </div>
             {% else %}

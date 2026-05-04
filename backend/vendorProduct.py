@@ -6,7 +6,43 @@ from sqlalchemy.orm import Session, selectinload
 
 from .models import CartItem, OrderItem, Product, ProductVariation, User,  engine
 
-vendorProduct_bp = Blueprint("vendorProduct", __name__, url_prefix="/account/vendor/")
+vendor_Product_bp = Blueprint("vendorProduct", __name__, url_prefix="/account/vendor/")
+
+
+def _require_vendor():
+    if not session.get("user_id"):
+        flash("Please log in to manage products.", "error")
+        return redirect(url_for("login.login"))
+
+    if session.get("role") != "vendor":
+        flash("Only vendor accounts can manage products.", "error")
+        return redirect(url_for("index.index"))
+
+    return None
+
+
+def _parse_price(price_text):
+    try:
+        price = Decimal(price_text)
+    except InvalidOperation:
+        return None
+
+    if price < 0:
+        return None
+
+    return price
+
+
+def _parse_stock(stock_text):
+    try:
+        stock = int(stock_text)
+    except ValueError:
+        return None
+
+    if stock < 0:
+        return None
+
+    return stock
 
 def _get_vendor_product(session_db, product_id):
     productUser = session_db.scalars(
@@ -37,15 +73,11 @@ def _clean_text(value):
     value = value.strip()
     return value or None
 
-@vendorProduct_bp.route("add", methods=["GET", "POST"])
+@vendor_Product_bp.route("add", methods=["GET", "POST"])
 def productAdd():
-    if not session.get("user_id"):
-        flash("Please log in to add products.", "error")
-        return redirect(url_for("login.login"))
-
-    if session.get("role") != "vendor":
-        flash("Only vendors can add products.", "error")
-        return redirect(url_for("index.index"))
+    vendor_redirect = _require_vendor()
+    if vendor_redirect:
+        return vendor_redirect
 
     if request.method == "GET":
         return render_template("vendorAdd.html")
@@ -59,10 +91,9 @@ def productAdd():
         flash("Model and price are required.", "error")
         return render_template("vendorAdd.html"), 400
 
-    try:
-        price = Decimal(price_text)
-    except InvalidOperation:
-        flash("Price must be a valid number.", "error")
+    price = _parse_price(price_text)
+    if price is None:
+        flash("Price must be a valid non-negative number.", "error")
         return render_template("vendorAdd.html"), 400
 
     colors = request.form.getlist("color")
@@ -82,10 +113,9 @@ def productAdd():
             flash("Each variation needs color, year, and stock.", "error")
             return render_template("vendorAdd.html"), 400
 
-        try:
-            stock = int(stock_text)
-        except ValueError:
-            flash("Variation stock must be a whole number.", "error")
+        stock = _parse_stock(stock_text)
+        if stock is None:
+            flash("Variation stock must be a non-negative whole number.", "error")
             return render_template("vendorAdd.html"), 400
 
         variations.append(ProductVariation(color=color, year=year, stock=stock))
@@ -106,80 +136,53 @@ def productAdd():
     flash("Product added successfully.", "success")
     return redirect(url_for("vendor_account.vendor_account"))
 
-@vendorProduct_bp.route("<int:product_id>/delete", methods=["GET"])
+@vendor_Product_bp.route("<int:product_id>/delete", methods=["GET"])
 def productDelConfirm(product_id):
-    if not session.get("user_id"):
-        flash("Please log in to delete products.", "error")
-        return redirect(url_for("login.login"))
-
-    if session.get("role") != "vendor":
-        flash("Only vendors can delete products.", "error")
-        return redirect(url_for("index.index"))
+    vendor_redirect = _require_vendor()
+    if vendor_redirect:
+        return vendor_redirect
 
     with Session(engine) as session_db:
-        productUser = session_db.scalars(
-            select(User.user_id)
-            .join(Product, User.user_id == Product.vendor_id)
-            .where(Product.product_id == product_id)
-        ).first()
-
-        if productUser is None:
-            abort(404)
-
-        if productUser != session.get("user_id"):
-            abort(403)
-
-        product = session_db.scalars(
-            select(Product).where(Product.product_id == product_id)
-        ).first()
-
-        if product is None:
-            abort(404)
+        product = _get_vendor_product(session_db, product_id)
 
         return render_template("vendorDelete.html", product=product)
 
 
-@vendorProduct_bp.route("<int:product_id>/delete", methods=["POST"])
+@vendor_Product_bp.route("<int:product_id>/delete", methods=["POST"])
 def productDel(product_id):
-    if not session.get("user_id"):
-        flash("Please log in to delete products.", "error")
-        return redirect(url_for("login.login"))
-
-    if session.get("role") != "vendor":
-        flash("Only vendors can delete products.", "error")
-        return redirect(url_for("index.index"))
+    vendor_redirect = _require_vendor()
+    if vendor_redirect:
+        return vendor_redirect
 
     with Session(engine) as session_db:
-        productUser = session_db.scalars(
-            select(User.user_id)
-            .join(Product, User.user_id == Product.vendor_id)
-            .where(Product.product_id == product_id)
-        ).first()
-        
-        if productUser is None:
-            abort(404)
+        product = _get_vendor_product(session_db, product_id)
+        variation_ids = [variation.var_id for variation in product.variations]
 
-        if productUser != session.get("user_id"):
-            abort(403)
+        if variation_ids:
+            session_db.execute(delete(CartItem).where(CartItem.var_id.in_(variation_ids)))
 
-        productVariations = select(ProductVariation.var_id).where(
-            ProductVariation.product_id == product_id
-        )
-        cartItemsDelete = delete(CartItem).where(CartItem.var_id.in_(productVariations))
-        productDelete = delete(Product).where(Product.product_id == product_id)
+        for variation in list(product.variations):
+            has_orders = session_db.scalars(
+                select(OrderItem.order_item_id).where(OrderItem.var_id == variation.var_id)
+            ).first()
 
-        session_db.execute(cartItemsDelete)
-        session_db.execute(productDelete)
+            if has_orders:
+                variation.stock = 0
+                variation.product_id = None
+            else:
+                session_db.delete(variation)
+
+        session_db.delete(product)
         session_db.commit()
         flash("Product deleted successfully.", "success")
         
         return redirect(url_for("vendor_account.vendor_account"))
 
-@vendorProduct_bp.route("<int:product_id>/edit", methods=["GET", "POST"])
+@vendor_Product_bp.route("<int:product_id>/edit", methods=["GET", "POST"])
 def productEdit(product_id):
-    if session.get("role") != "vendor":
-        flash("You must be logged in as a vendor to edit products.", "error")
-        return redirect(url_for("login.login"))
+    vendor_redirect = _require_vendor()
+    if vendor_redirect:
+        return vendor_redirect
 
     with Session(engine) as session_db:
         product = _get_vendor_product(session_db, product_id)
@@ -196,10 +199,9 @@ def productEdit(product_id):
             flash("Model and price are required.", "error")
             return render_template("vendorEdit.html", product=product), 400
 
-        try:
-            price = Decimal(price_text)
-        except InvalidOperation:
-            flash("Price must be a valid number.", "error")
+        price = _parse_price(price_text)
+        if price is None:
+            flash("Price must be a valid non-negative number.", "error")
             return render_template("vendorEdit.html", product=product), 400
 
         product.model = model
@@ -234,10 +236,9 @@ def productEdit(product_id):
                 flash("Selected variations need color, year, and stock.", "error")
                 return render_template("vendorEdit.html", product=product), 400
 
-            try:
-                stock = int(stock_text)
-            except ValueError:
-                flash("Variation stock must be a whole number.", "error")
+            stock = _parse_stock(stock_text)
+            if stock is None:
+                flash("Variation stock must be a non-negative whole number.", "error")
                 return render_template("vendorEdit.html", product=product), 400
 
             variation.color = color
@@ -260,10 +261,9 @@ def productEdit(product_id):
                 flash("New variations need color, year, and stock.", "error")
                 return render_template("vendorEdit.html", product=product), 400
 
-            try:
-                stock = int(stock_text)
-            except ValueError:
-                flash("New variation stock must be a whole number.", "error")
+            stock = _parse_stock(stock_text)
+            if stock is None:
+                flash("New variation stock must be a non-negative whole number.", "error")
                 return render_template("vendorEdit.html", product=product), 400
 
             session_db.add(

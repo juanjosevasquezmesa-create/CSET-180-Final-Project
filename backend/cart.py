@@ -2,7 +2,7 @@ from flask import Blueprint, request, session, jsonify
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .models import CartItem, Product, ProductVariation, engine
+from .models import CartItem, ProductVariation, engine
 
 cart_bp = Blueprint("cart", __name__, url_prefix="/api/cart")
 
@@ -11,6 +11,9 @@ cart_bp = Blueprint("cart", __name__, url_prefix="/api/cart")
 def add_cart_item():
     if "user_id" not in session:
         return jsonify({"error": "Not logged in"}), 401
+
+    if session.get("role") != "customer":
+        return jsonify({"error": "Only customer accounts can use the cart."}), 403
 
     data = request.get_json(silent=True) or {}
     variation_id = data.get("variation_id")
@@ -25,6 +28,9 @@ def add_cart_item():
 
         if not variation:
             return jsonify({"error": "Product option not found."}), 404
+
+        if not variation.product:
+            return jsonify({"error": "This product is no longer available."}), 404
 
         if variation.stock < 1:
             return jsonify({"error": "This option is out of stock."}), 400
@@ -59,6 +65,9 @@ def update_cart_item(cart_item_id):
     if "user_id" not in session:
         return jsonify({"error": "Not logged in"}), 401
 
+    if session.get("role") != "customer":
+        return jsonify({"error": "Only customer accounts can use the cart."}), 403
+
     data = request.get_json(silent=True) or {}
     quantity = data.get("quantity")
 
@@ -76,6 +85,11 @@ def update_cart_item(cart_item_id):
         if not cart_item or cart_item.customer_id != session["user_id"]:
             return jsonify({"error": "Cart item not found."}), 404
 
+        if not cart_item.variation.product:
+            session_db.delete(cart_item)
+            session_db.commit()
+            return jsonify({"error": "This product is no longer available."}), 404
+
         if quantity > cart_item.variation.stock:
             return jsonify({"error": "Quantity exceeds available stock."}), 400
 
@@ -89,6 +103,9 @@ def update_cart_item(cart_item_id):
 def remove_cart_item(cart_item_id):
     if "user_id" not in session:
         return jsonify({"error": "Not logged in"}), 401
+
+    if session.get("role") != "customer":
+        return jsonify({"error": "Only customer accounts can use the cart."}), 403
 
     with Session(engine) as session_db:
         cart_item = session_db.get(CartItem, cart_item_id)
@@ -108,6 +125,9 @@ def get_cart_items():
     if "user_id" not in session:
         return jsonify({"error": "Not logged in"}), 401
 
+    if session.get("role") != "customer":
+        return jsonify({"error": "Only customer accounts can use the cart."}), 403
+
     user_id = session["user_id"]
     
     with Session(engine) as session_db:
@@ -121,8 +141,12 @@ def get_cart_items():
         
         for item in cart_items:
             # Get product and variation details
-            product = session_db.get(Product, item.variation.product_id)
             variation = item.variation
+            product = variation.product
+
+            if not product:
+                session_db.delete(item)
+                continue
             
             item_total = float(product.price) * item.quantity
             total_price += item_total
@@ -138,7 +162,8 @@ def get_cart_items():
                 "stock": variation.stock,
                 "item_total": item_total,
             })
-        
+        session_db.commit()
+
         return jsonify({
             "items": items_data,
             "total_price": total_price,

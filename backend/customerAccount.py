@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from .models import User, Order, engine
+from .customerOrders import order_item_data
 
 customer_account_bp = Blueprint("customer_account", __name__, url_prefix="/account/")
 
@@ -30,15 +31,7 @@ def customer_account():
         for order in orders:
             items = []
             for item in order.items:
-                product = item.variation.product
-                items.append({
-                    "order_item_id": item.order_item_id,
-                    "product_id": product.product_id,
-                    "model": product.model,
-                    "quantity": item.quantity,
-                    "price": item.price,
-                    "variation": f"{item.variation.color} {item.variation.year}"
-                })
+                items.append(order_item_data(item))
             order_data.append({
                 "order_id": order.order_id,
                 "order_date": order.order_date,

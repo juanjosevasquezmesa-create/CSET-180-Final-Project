@@ -4,9 +4,28 @@ from flask import Blueprint, render_template, request, redirect, session, url_fo
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .models import User, Order, OrderItem, Review, Complaint, engine
+from .models import Order, OrderItem, ProductVariation, Review, Complaint, engine
 
 customer_orders_bp = Blueprint("customer_orders", __name__, url_prefix="/account/")
+
+
+def order_item_data(item):
+    variation = item.variation
+    product = variation.product if variation else None
+
+    variation_label = "Unavailable option"
+    if variation:
+        variation_label = f"{variation.color} {variation.year}"
+
+    return {
+        "order_item_id": item.order_item_id,
+        "product_id": product.product_id if product else None,
+        "model": product.model if product else "Unavailable product",
+        "quantity": item.quantity,
+        "price": item.price,
+        "variation": variation_label,
+        "can_review": product is not None,
+    }
 
 
 @customer_orders_bp.route("customer/order/<int:order_id>", methods=["GET"])
@@ -22,16 +41,7 @@ def order_details(order_id):
 
         items = []
         for item in order.items:
-            product = item.variation.product
-            items.append({
-                "order_item_id": item.order_item_id,
-                "product_id": product.product_id,
-                "model": product.model,
-                "quantity": item.quantity,
-                "price": item.price,
-                "line_total": float(item.price) * item.quantity,
-                "variation": f"{item.variation.color} {item.variation.year}"
-            })
+            items.append(order_item_data(item))
 
         order_data = {
             "order_id": order.order_id,
@@ -59,6 +69,20 @@ def submit_review():
         return redirect(url_for("customer_account.customer_account"))
 
     with Session(engine) as session_db:
+        product_order_item = session_db.scalars(
+            select(OrderItem)
+            .join(Order, OrderItem.order_id == Order.order_id)
+            .join(ProductVariation, OrderItem.var_id == ProductVariation.var_id)
+            .where(
+                Order.customer_id == user_id,
+                ProductVariation.product_id == product_id,
+            )
+        ).first()
+
+        if not product_order_item:
+            flash("Invalid review data.", "error")
+            return redirect(url_for("customer_account.customer_account"))
+
         existing = session_db.scalars(
             select(Review).where(Review.product_id == product_id, Review.customer_id == user_id)
         ).first()

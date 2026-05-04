@@ -45,7 +45,11 @@ app.register_blueprint(customer_orders_bp)
 # app.register_blueprint(productAdd_bp)
 # app.register_blueprint(productDel_bp)
 # app.register_blueprint(productEdit_bp)
-app.register_blueprint(vendorProduct_bp)
+app.register_blueprint(vendor_Product_bp)
+app.register_blueprint(customer_account_bp)
+app.register_blueprint(customer_orders_bp)
+app.register_blueprint(admin_account_bp)
+app.register_blueprint(checkout_bp)
 if __name__ == "__main__":
     app.run(debug=True)
 

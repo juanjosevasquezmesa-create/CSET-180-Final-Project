@@ -2,38 +2,386 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/account.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/cart.css') }}">
+    <style>
+        /* Tab nav */
+        .admin-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 28px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0;
+        }
+        .admin-tab {
+            padding: 10px 22px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            color: rgba(247, 241, 230, 0.5);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: color 0.2s, border-color 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .admin-tab:hover { color: #f7f1e6; }
+        .admin-tab.active { color: #f0dfbb; border-bottom-color: #cfb37c; }
+
+        /* Stat cards */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        @media (max-width: 640px) { .stat-grid { grid-template-columns: 1fr; } }
+        .stat-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 10px;
+            padding: 20px 24px;
+            text-align: center;
+        }
+        .stat-number {
+            font-family: "Cormorant Garamond", serif;
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: #f0dfbb;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .stat-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(247, 241, 230, 0.45);
+        }
+
+        /* Alert */
+        .admin-alert {
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .admin-alert.error { background: rgba(220,53,69,0.12); border: 1px solid rgba(220,53,69,0.3); color: #ff8b8b; }
+        .admin-alert.success { background: rgba(52,199,89,0.1); border: 1px solid rgba(52,199,89,0.3); color: #34c759; }
+
+        /* Table panel */
+        .admin-panel {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .admin-panel-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .admin-panel-header h2 {
+            margin: 0;
+            font-family: "Cormorant Garamond", serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: rgba(207, 179, 124, 0.15);
+            color: #f0dfbb;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .admin-table th {
+            padding: 12px 20px;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(247, 241, 230, 0.4);
+            background: rgba(0,0,0,0.15);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+        .admin-table td {
+            padding: 14px 20px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            vertical-align: middle;
+        }
+        .admin-table tr:last-child td { border-bottom: none; }
+        .admin-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        /* Status pills */
+        .pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .pill-pending { background: rgba(255,193,7,0.15); color: #ffc107; }
+        .pill-confirmed, .pill-verified { background: rgba(52,199,89,0.12); color: #34c759; }
+        .pill-processing { background: rgba(13,110,253,0.15); color: #6ea8fe; }
+        .pill-complete { background: rgba(108,117,125,0.2); color: #adb5bd; }
+
+        /* Action forms */
+        .action-form { display: inline; }
+        .action-select {
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 6px;
+            color: #f7f1e6;
+            font-size: 0.82rem;
+            font-family: "Manrope", sans-serif;
+            cursor: pointer;
+            outline: none;
+        }
+        .action-select option { background: #1a1a17; }
+        .action-btn {
+            padding: 5px 14px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: "Manrope", sans-serif;
+            transition: opacity 0.2s;
+        }
+        .action-btn:hover { opacity: 0.8; }
+        .action-btn-gold { background: rgba(207,179,124,0.2); color: #f0dfbb; }
+        .action-btn-green { background: rgba(52,199,89,0.15); color: #34c759; }
+        .action-btn-warn { background: rgba(255,193,7,0.15); color: #ffc107; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: rgba(247,241,230,0.4);
+            font-size: 0.9rem;
+        }
+
+        .section-gap { margin-top: 24px; }
+
+        .demand-tag {
+            font-size: 0.78rem;
+            color: rgba(247,241,230,0.5);
+            font-style: italic;
+        }
+    </style>
 {% endblock %}
 
-{% block title %}Admin Account | Lux Auto{% endblock %}
+{% block title %}Admin Dashboard | Lux Auto{% endblock %}
 
 {% block body %}
-    <main class="account-page">
-        <section class="account-shell">
-            <div class="account-heading">
-                <p class="account-kicker">Admin</p>
+<main class="cart-page">
+    <section class="cart-shell" aria-label="Admin dashboard">
+        <div class="cart-heading">
+            <div>
+                <p class="cart-kicker">Admin Portal</p>
                 <h1>Dashboard</h1>
-                {% if error %}
-                    <p>{{ error }}</p>
+            </div>
+        </div>
+
+        {% if error is defined and error %}
+            <div class="admin-alert error">Error loading data: {{ error }}</div>
+        {% endif %}
+        {% if request.args.get('success') %}
+            <div class="admin-alert success">{{ request.args.get('success') }}</div>
+        {% endif %}
+        {% if request.args.get('error') %}
+            <div class="admin-alert error">{{ request.args.get('error') }}</div>
+        {% endif %}
+
+        <!-- Stats -->
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_complaints if total_complaints is defined else 0 }}</div>
+                <div class="stat-label">Total Complaints</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ total_warranty_claims if total_warranty_claims is defined else 0 }}</div>
+                <div class="stat-label">Warranty Claims</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ total_pending_vendors if total_pending_vendors is defined else 0 }}</div>
+                <div class="stat-label">Pending Vendors</div>
+            </div>
+        </div>
+
+        <!-- Tab nav -->
+        <nav class="admin-tabs">
+            <a class="admin-tab {% if current_view == 'dashboard' %}active{% endif %}"
+               href="{{ url_for('admin_account.admin_account', view='dashboard') }}">Overview</a>
+            <a class="admin-tab {% if current_view == 'complaints' %}active{% endif %}"
+               href="{{ url_for('admin_account.admin_account', view='complaints') }}">Complaints</a>
+            <a class="admin-tab {% if current_view == 'vendors' %}active{% endif %}"
+               href="{{ url_for('admin_account.admin_account', view='vendors') }}">Vendors</a>
+        </nav>
+
+        <!-- Dashboard overview -->
+        {% if current_view == 'dashboard' %}
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2>Quick Navigation</h2>
+                </div>
+                <div style="padding: 28px; display: flex; gap: 16px; flex-wrap: wrap;">
+                    <a href="{{ url_for('admin_account.admin_account', view='complaints') }}"
+                       class="checkout-action" style="display:inline-block;">View Complaints</a>
+                    <a href="{{ url_for('admin_account.admin_account', view='vendors') }}"
+                       class="checkout-action" style="display:inline-block;">Manage Vendors</a>
+                </div>
+            </div>
+
+        <!-- Complaints view -->
+        {% elif current_view == 'complaints' %}
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2>Complaints</h2>
+                    <span class="badge">{{ complaints|length if complaints is defined else 0 }} total</span>
+                </div>
+                {% if complaints %}
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Customer</th>
+                                <th>Product</th>
+                                <th>Title</th>
+                                <th>Demand</th>
+                                <th>Status</th>
+                                <th>Handler</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in complaints %}
+                            <tr>
+                                <td style="color:rgba(247,241,230,0.4);font-size:0.8rem;">{{ c.complaint.complaint_id }}</td>
+                                <td>{{ c.customer.name }}</td>
+                                <td>{{ c.product.model }}</td>
+                                <td>
+                                    {{ c.complaint.title }}
+                                    {% if c.complaint.description %}
+                                        <div class="demand-tag">{{ c.complaint.description[:60] }}{% if c.complaint.description|length > 60 %}…{% endif %}</div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="pill pill-pending">{{ c.complaint.demand|replace('_',' ')|title }}</span>
+                                </td>
+                                <td>
+                                    {% set s = c.complaint.status %}
+                                    <span class="pill pill-{{ s }}">{{ s|title }}</span>
+                                </td>
+                                <td style="color:rgba(247,241,230,0.5);font-size:0.85rem;">
+                                    {{ c.handler.name if c.handler else '—' }}
+                                </td>
+                                <td>
+                                    <form class="action-form" method="POST"
+                                          action="{{ url_for('admin_account.update_complaint_status', complaint_id=c.complaint.complaint_id) }}">
+                                        <select class="action-select" name="status">
+                                            <option value="pending" {% if c.complaint.status == 'pending' %}selected{% endif %}>Pending</option>
+                                            <option value="confirmed" {% if c.complaint.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                            <option value="processing" {% if c.complaint.status == 'processing' %}selected{% endif %}>Processing</option>
+                                            <option value="complete" {% if c.complaint.status == 'complete' %}selected{% endif %}>Complete</option>
+                                        </select>
+                                        <button class="action-btn action-btn-gold" type="submit">Update</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 {% else %}
-                    <p>Review complaints and vendor verification.</p>
+                    <div class="empty-state">No complaints found.</div>
                 {% endif %}
             </div>
 
-            <section class="account-grid">
-                <article class="account-stat">
-                    <span>Total Complaints</span>
-                    <strong>{{ total_complaints or 0 }}</strong>
-                </article>
-                <article class="account-stat">
-                    <span>Warranty Claims</span>
-                    <strong>{{ total_warranty_claims or 0 }}</strong>
-                </article>
-                <article class="account-stat">
-                    <span>Pending Vendors</span>
-                    <strong>{{ total_pending_vendors or 0 }}</strong>
-                </article>
-            </section>
-        </section>
-    </main>
+        <!-- Vendors view -->
+        {% elif current_view == 'vendors' %}
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2>Pending Verification</h2>
+                    <span class="badge">{{ pending_vendors|length if pending_vendors is defined else 0 }}</span>
+                </div>
+                {% if pending_vendors %}
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for vendor in pending_vendors %}
+                            <tr>
+                                <td style="color:rgba(247,241,230,0.4);font-size:0.8rem;">{{ vendor.user_id }}</td>
+                                <td>{{ vendor.name }}</td>
+                                <td style="color:rgba(247,241,230,0.6);">{{ vendor.email }}</td>
+                                <td><span class="pill pill-pending">Pending</span></td>
+                                <td>
+                                    <form class="action-form" method="POST"
+                                          action="{{ url_for('admin_account.verify_vendor', vendor_id=vendor.user_id) }}">
+                                        <button class="action-btn action-btn-green" type="submit">Verify</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="empty-state">No pending vendors.</div>
+                {% endif %}
+            </div>
+
+            {% if verified_vendors %}
+            <div class="admin-panel section-gap">
+                <div class="admin-panel-header">
+                    <h2>Verified Vendors</h2>
+                    <span class="badge">{{ verified_vendors|length }}</span>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vendor in verified_vendors %}
+                        <tr>
+                            <td style="color:rgba(247,241,230,0.4);font-size:0.8rem;">{{ vendor.user_id }}</td>
+                            <td>{{ vendor.name }}</td>
+                            <td style="color:rgba(247,241,230,0.6);">{{ vendor.email }}</td>
+                            <td><span class="pill pill-verified">Verified</span></td>
+                            <td>
+                                <form class="action-form" method="POST"
+                                      action="{{ url_for('admin_account.verify_vendor', vendor_id=vendor.user_id) }}">
+                                    <button class="action-btn action-btn-warn" type="submit">Revoke</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        {% endif %}
+
+    </section>
+</main>
 {% endblock %}
