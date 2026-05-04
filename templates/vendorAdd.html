@@ -27,12 +27,12 @@
 
             <form class="vendor-form" method="POST">
                 <section class="form-band">
-                    <label class="vendor-field wide">
+                    <label class="vendor-field" style="grid-column:1/-1;">
                         <span>Model</span>
                         <textarea name="model" rows="2" placeholder="Apex S Touring" required></textarea>
                     </label>
 
-                    <label class="vendor-field wide">
+                    <label class="vendor-field" style="grid-column:1/-1;">
                         <span>Description</span>
                         <textarea name="description" rows="3" placeholder="Luxury sport sedan with adaptive suspension and premium interior."></textarea>
                     </label>
@@ -53,7 +53,7 @@
                 <section class="form-band">
                     <div class="section-title-row">
                         <h2>Product Variations</h2>
-                        <button class="ghost-btn" id="add-variation" type="button">Add Variation</button>
+                        <button class="ghost-btn" id="add-variation" type="button">+ Add Variation</button>
                     </div>
 
                     <div class="add-variation-list" id="variation-list">
@@ -62,12 +62,10 @@
                                 <span>Color</span>
                                 <input type="text" name="color" placeholder="Obsidian Black">
                             </label>
-
                             <label class="vendor-field">
                                 <span>Year</span>
                                 <input type="text" name="year" maxlength="4" placeholder="2024">
                             </label>
-
                             <label class="vendor-field">
                                 <span>Stock</span>
                                 <input type="number" name="stock" min="0" step="1" placeholder="4">
@@ -87,73 +85,36 @@
 
 {% block scripts %}
     <script>
-        window.addEventListener("load", () => {
-            const addButton = document.getElementById("add-variation");
-            const variationList = document.getElementById("variation-list");
-            const menuToggle = document.querySelector(".menu-toggle");
-            const navPanel = document.querySelector(".nav-panel");
-            const menuBackdrop = document.querySelector(".menu-backdrop");
+        const addButton = document.getElementById("add-variation");
+        const variationList = document.getElementById("variation-list");
 
-            if (addButton && variationList) {
-                addButton.addEventListener("click", () => {
-                    const row = document.createElement("div");
-                    row.className = "add-variation-row removable";
-                    row.innerHTML = `
-                        <label class="vendor-field">
-                            <span>Color</span>
-                            <input type="text" name="color" placeholder="Graphite Gray">
-                        </label>
+        if (addButton && variationList) {
+            addButton.addEventListener("click", () => {
+                const row = document.createElement("div");
+                row.className = "add-variation-row removable";
+                row.innerHTML = `
+                    <label class="vendor-field">
+                        <span>Color</span>
+                        <input type="text" name="color" placeholder="Graphite Gray">
+                    </label>
+                    <label class="vendor-field">
+                        <span>Year</span>
+                        <input type="text" name="year" maxlength="4" placeholder="2025">
+                    </label>
+                    <label class="vendor-field">
+                        <span>Stock</span>
+                        <input type="number" name="stock" min="0" step="1" placeholder="2">
+                    </label>
+                    <button class="remove-row" type="button">Remove</button>
+                `;
+                variationList.appendChild(row);
+            });
 
-                        <label class="vendor-field">
-                            <span>Year</span>
-                            <input type="text" name="year" maxlength="4" placeholder="2025">
-                        </label>
-
-                        <label class="vendor-field">
-                            <span>Stock</span>
-                            <input type="number" name="stock" min="0" step="1" placeholder="2">
-                        </label>
-
-                        <button class="remove-row" type="button">Remove</button>
-                    `;
-                    variationList.appendChild(row);
-                });
-
-                variationList.addEventListener("click", (event) => {
-                    if (event.target.classList.contains("remove-row")) {
-                        event.target.closest(".add-variation-row").remove();
-                    }
-                });
-            }
-
-            if (menuToggle && navPanel) {
-                const closeMenu = () => {
-                    menuToggle.setAttribute("aria-expanded", "false");
-                    navPanel.classList.remove("is-open");
-                    document.body.classList.remove("menu-open");
-                };
-
-                menuToggle.addEventListener("click", () => {
-                    const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
-                    menuToggle.setAttribute("aria-expanded", String(!isOpen));
-                    navPanel.classList.toggle("is-open", !isOpen);
-                    document.body.classList.toggle("menu-open", !isOpen);
-                });
-
-                navPanel.querySelectorAll("a").forEach((link) => {
-                    link.addEventListener("click", closeMenu);
-                });
-
-                if (menuBackdrop) {
-                    menuBackdrop.addEventListener("click", closeMenu);
+            variationList.addEventListener("click", (e) => {
+                if (e.target.classList.contains("remove-row")) {
+                    e.target.closest(".add-variation-row").remove();
                 }
-
-                window.addEventListener("resize", () => {
-                    if (window.innerWidth > 640) {
-                        closeMenu();
-                    }
-                });
-            }
-        });
+            });
+        }
     </script>
 {% endblock %}

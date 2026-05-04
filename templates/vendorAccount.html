@@ -8,125 +8,110 @@
 {% block title %}Vendor Account | Lux Auto{% endblock %}
 
 {% block body %}
-    <main class="vendor-page">
-        <section class="vendor-shell">
-            <aside class="vendor-sidebar">
-                <div class="vendor-card">
-                    <p class="tag">Vendor</p>
-                    <h1>{{ session.username|title }}</h1>
-                    <p>{{ session.name|title }}</p>
-                </div>
+<main class="vendor-page">
+    <div class="vendor-shell">
 
-                <a class="btn main-btn add-product-link" href="{{ url_for('vendorProduct.productAdd') }}">Add Product</a>
-            </aside>
+        <!-- ── Sidebar ── -->
+        <aside class="vendor-sidebar">
+            <div class="vendor-identity">
+                <p class="vendor-identity-eyebrow">Vendor Portal</p>
+                <h1>{{ session.get('name', '')|title }}</h1>
+                <p class="vendor-identity-sub">@{{ session.get('username', '') }}</p>
 
-            <section class="vendor-products" aria-label="Vendor products">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        <div class="flash-list" aria-live="polite">
-                            {% for category, message in messages %}
-                                <p class="flash-message {{ category }}">{{ message }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                {% endwith %}
+                <div class="vendor-divider"></div>
 
-                {% if products %}
-                    <div class="product-list">
-                        {% for product in products %}
-                            <article class="vendor-product-row">
-                                <div class="product-summary">
-                                    <h2>{{ product.model }}</h2>
-                                    <p>
-                                        ${{ "{:,.2f}".format(product.price) }}
-                                        {% if product.variations %}
-                                            <span>{{ product.variations|length }} variation{% if product.variations|length != 1 %}s{% endif %}</span>
-                                        {% endif %}
-                                    </p>
-                                </div>
+                <a class="vendor-nav-link active" href="{{ url_for('vendor_account.vendor_account') }}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                    My Products
+                </a>
+            </div>
 
-                                <div class="product-actions">
-                                    <a
-                                        class="icon-action"
-                                        href="{{ url_for('vendorProduct.productEdit', product_id=product.product_id) }}"
-                                        aria-label="Edit {{ product.model }}"
-                                        title="Edit"
-                                    >
-                                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                            <path d="M14 2v6h6"></path>
-                                            <path d="M9 15h6"></path>
-                                            <path d="M9 18h4"></path>
-                                        </svg>
-                                    </a>
+            <a class="vendor-add-btn" href="{{ url_for('vendorProduct.productAdd') }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add New Product
+            </a>
+        </aside>
 
-                                    <a
-                                        class="icon-action danger"
-                                        href="{{ url_for('vendorProduct.productDelConfirm', product_id=product.product_id) }}"
-                                        aria-label="Delete {{ product.model }}"
-                                        title="Delete"
-                                    >
-                                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                                            <path d="M3 6h18"></path>
-                                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-                                            <path d="M10 11v6"></path>
-                                            <path d="M14 11v6"></path>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </article>
+        <!-- ── Main ── -->
+        <section class="vendor-main">
+            <div class="vendor-page-header">
+                <p class="vendor-page-kicker">Inventory</p>
+                <h2>Your Products</h2>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-list" aria-live="polite">
+                        {% for category, message in messages %}
+                            <p class="flash-message {{ category }}">{{ message }}</p>
                         {% endfor %}
                     </div>
-                {% else %}
-                    <div class="empty-vendor-state">
-                        <h2>No products yet</h2>
-                        <p>Add your first vehicle listing to start building your inventory.</p>
-                        <a class="btn main-btn" href="{{ url_for('vendorProduct.productAdd') }}">Add Product</a>
-                    </div>
                 {% endif %}
-            </section>
+            {% endwith %}
+
+            {% if products %}
+                <div class="product-list">
+                    {% for product in products %}
+                        <article class="vendor-product-row">
+                            <div class="product-summary">
+                                <h2>{{ product.model }}</h2>
+                                <div class="product-meta">
+                                    <span class="product-price">${{ "{:,.2f}".format(product.price) }}</span>
+                                    {% if product.variations %}
+                                        <span class="product-variations-tag">
+                                            {{ product.variations|length }} variation{% if product.variations|length != 1 %}s{% endif %}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="product-actions">
+                                          <a class="icon-action"
+                                              href="{{ url_for('vendorProduct.productEdit', product_id=product.product_id) }}"
+                                              aria-label="Edit {{ product.model }}" title="Edit">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                </a>
+                                          <a class="icon-action danger"
+                                              href="{{ url_for('vendorProduct.productDelConfirm', product_id=product.product_id) }}"
+                                              aria-label="Delete {{ product.model }}" title="Delete">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                                        <path d="M10 11v6"></path>
+                                        <path d="M14 11v6"></path>
+                                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-vendor-state">
+                    <h2>No products yet</h2>
+                    <p>Add your first vehicle listing to start building your inventory on Lux Auto.</p>
+                    <a class="vendor-add-btn" href="{{ url_for('vendorProduct.productAdd') }}"
+                       style="width:fit-content;margin:0 auto;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add First Product
+                    </a>
+                </div>
+            {% endif %}
         </section>
-    </main>
-{% endblock %}
 
-{% block scripts %}
-    <script>
-        window.addEventListener("load", () => {
-            const menuToggle = document.querySelector(".menu-toggle");
-            const navPanel = document.querySelector(".nav-panel");
-            const menuBackdrop = document.querySelector(".menu-backdrop");
-
-            if (!menuToggle || !navPanel) {
-                return;
-            }
-
-            const closeMenu = () => {
-                menuToggle.setAttribute("aria-expanded", "false");
-                navPanel.classList.remove("is-open");
-                document.body.classList.remove("menu-open");
-            };
-
-            menuToggle.addEventListener("click", () => {
-                const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
-                menuToggle.setAttribute("aria-expanded", String(!isOpen));
-                navPanel.classList.toggle("is-open", !isOpen);
-                document.body.classList.toggle("menu-open", !isOpen);
-            });
-
-            navPanel.querySelectorAll("a").forEach((link) => {
-                link.addEventListener("click", closeMenu);
-            });
-
-            if (menuBackdrop) {
-                menuBackdrop.addEventListener("click", closeMenu);
-            }
-
-            window.addEventListener("resize", () => {
-                if (window.innerWidth > 640) {
-                    closeMenu();
-                }
-            });
-        });
-    </script>
+    </div>
+</main>
 {% endblock %}

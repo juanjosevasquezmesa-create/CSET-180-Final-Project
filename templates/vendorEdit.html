@@ -38,24 +38,16 @@
 
                     <label class="field">
                         <span>Warranty Period</span>
-                        <input
-                            type="text"
-                            name="warranty_period"
-                            value="{{ product.warranty_period or '' }}"
-                            placeholder="48 months"
-                        >
+                        <input type="text" name="warranty_period"
+                               value="{{ product.warranty_period or '' }}"
+                               placeholder="48 months">
                     </label>
 
                     <label class="field">
                         <span>Price</span>
-                        <input
-                            type="number"
-                            name="price"
-                            value="{{ '%.2f'|format(product.price) }}"
-                            min="0"
-                            step="0.01"
-                            required
-                        >
+                        <input type="number" name="price"
+                               value="{{ '%.2f'|format(product.price) }}"
+                               min="0" step="0.01" required>
                     </label>
 
                     <label class="field wide">
@@ -68,50 +60,41 @@
             <section class="form-section">
                 <div class="section-heading split">
                     <h2>Variations</h2>
-                    <button class="ghost-btn" id="add-variation" type="button">Add Variation</button>
+                    <button class="ghost-btn" id="add-variation" type="button">+ Add Variation</button>
                 </div>
 
                 <div class="variation-list" id="variation-list">
                     {% for variation in product.variations %}
                         <div class="variation-row">
                             <label class="check-field">
-                                <input
-                                    type="checkbox"
-                                    name="selected_variations"
-                                    value="{{ variation.var_id }}"
-                                    checked
-                                >
+                                <input type="checkbox"
+                                       name="selected_variations"
+                                       value="{{ variation.var_id }}"
+                                       checked>
                                 <span>Active</span>
                             </label>
 
                             <label class="field compact">
                                 <span>Color</span>
-                                <input
-                                    type="text"
-                                    name="color_{{ variation.var_id }}"
-                                    value="{{ variation.color }}"
-                                >
+                                <input type="text"
+                                       name="color_{{ variation.var_id }}"
+                                       value="{{ variation.color }}">
                             </label>
 
                             <label class="field compact">
                                 <span>Year</span>
-                                <input
-                                    type="text"
-                                    name="year_{{ variation.var_id }}"
-                                    value="{{ variation.year }}"
-                                    maxlength="4"
-                                >
+                                <input type="text"
+                                       name="year_{{ variation.var_id }}"
+                                       value="{{ variation.year }}"
+                                       maxlength="4">
                             </label>
 
                             <label class="field compact">
                                 <span>Stock</span>
-                                <input
-                                    type="number"
-                                    name="stock_{{ variation.var_id }}"
-                                    value="{{ variation.stock }}"
-                                    min="0"
-                                    step="1"
-                                >
+                                <input type="number"
+                                       name="stock_{{ variation.var_id }}"
+                                       value="{{ variation.stock }}"
+                                       min="0" step="1">
                             </label>
                         </div>
                     {% endfor %}
@@ -128,75 +111,41 @@
 
 {% block scripts %}
     <script>
-        window.addEventListener("load", () => {
-            const addButton = document.getElementById("add-variation");
-            const variationList = document.getElementById("variation-list");
-            const menuToggle = document.querySelector(".menu-toggle");
-            const navPanel = document.querySelector(".nav-panel");
-            const menuBackdrop = document.querySelector(".menu-backdrop");
+        const addButton = document.getElementById("add-variation");
+        const variationList = document.getElementById("variation-list");
 
-            if (addButton && variationList) {
-                addButton.addEventListener("click", () => {
-                    const row = document.createElement("div");
-                    row.className = "variation-row new-row";
-                    row.innerHTML = `
-                        <span class="new-label">New</span>
+        if (addButton && variationList) {
+            addButton.addEventListener("click", () => {
+                const row = document.createElement("div");
+                row.className = "variation-row new-row";
+                row.innerHTML = `
+                    <span class="new-label">New</span>
 
-                        <label class="field compact">
-                            <span>Color</span>
-                            <input type="text" name="new_color" placeholder="Graphite Gray">
-                        </label>
+                    <label class="field compact">
+                        <span>Color</span>
+                        <input type="text" name="new_color" placeholder="Graphite Gray">
+                    </label>
 
-                        <label class="field compact">
-                            <span>Year</span>
-                            <input type="text" name="new_year" placeholder="2024" maxlength="4">
-                        </label>
+                    <label class="field compact">
+                        <span>Year</span>
+                        <input type="text" name="new_year" placeholder="2025" maxlength="4">
+                    </label>
 
-                        <label class="field compact">
-                            <span>Stock</span>
-                            <input type="number" name="new_stock" min="0" step="1" placeholder="3">
-                        </label>
+                    <label class="field compact">
+                        <span>Stock</span>
+                        <input type="number" name="new_stock" min="0" step="1" placeholder="3">
+                    </label>
 
-                        <button class="remove-row" type="button" aria-label="Remove variation">Remove</button>
-                    `;
-                    variationList.appendChild(row);
-                });
+                    <button class="remove-row" type="button" aria-label="Remove variation">Remove</button>
+                `;
+                variationList.appendChild(row);
+            });
 
-                variationList.addEventListener("click", (event) => {
-                    if (event.target.classList.contains("remove-row")) {
-                        event.target.closest(".variation-row").remove();
-                    }
-                });
-            }
-
-            if (menuToggle && navPanel) {
-                const closeMenu = () => {
-                    menuToggle.setAttribute("aria-expanded", "false");
-                    navPanel.classList.remove("is-open");
-                    document.body.classList.remove("menu-open");
-                };
-
-                menuToggle.addEventListener("click", () => {
-                    const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
-                    menuToggle.setAttribute("aria-expanded", String(!isOpen));
-                    navPanel.classList.toggle("is-open", !isOpen);
-                    document.body.classList.toggle("menu-open", !isOpen);
-                });
-
-                navPanel.querySelectorAll("a").forEach((link) => {
-                    link.addEventListener("click", closeMenu);
-                });
-
-                if (menuBackdrop) {
-                    menuBackdrop.addEventListener("click", closeMenu);
+            variationList.addEventListener("click", (e) => {
+                if (e.target.classList.contains("remove-row")) {
+                    e.target.closest(".variation-row").remove();
                 }
-
-                window.addEventListener("resize", () => {
-                    if (window.innerWidth > 640) {
-                        closeMenu();
-                    }
-                });
-            }
-        });
+            });
+        }
     </script>
 {% endblock %}

@@ -126,14 +126,17 @@
 {% block title %}My Account | Lux Auto{% endblock %}
 
 {% block body %}
-<main class="cart-page">
-    <section class="cart-shell" aria-label="Customer account">
-        <div class="cart-heading">
-            <div>
-                <p class="cart-kicker">Customer Account</p>
-                <h1>My Orders</h1>
+<main class="account-page">
+    <section class="account-shell">
+
+        <div class="account-heading">
+            <div class="account-header-row">
+                <div>
+                    <p class="account-kicker">Customer Account</p>
+                    <h1>My Orders</h1>
+                </div>
+                <a class="account-action-btn" href="{{ url_for('productList.products') }}">Browse Cars</a>
             </div>
-            <a class="continue-link" href="{{ url_for('productList.products') }}">Browse Cars</a>
         </div>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -170,19 +173,21 @@
                             <p class="order-total">${{ "{:,.2f}".format(order.total_price) }}</p>
                         </div>
                         <div class="order-actions">
-                            <a class="checkout-action" href="{{ order.detail_url }}"
-                               style="font-size:0.85rem;padding:9px 18px;">View Details</a>
+                            <a class="account-action-btn" href="{{ order.detail_url }}"
+                               style="font-size:0.85rem;min-height:40px;padding:0 18px;">View Details</a>
                         </div>
                     </div>
                 {% endfor %}
             </div>
         {% else %}
-            <div class="empty-cart-state">
-                <h2>No orders yet</h2>
-                <p>Your completed purchases will appear here.</p>
-                <a class="checkout-action" href="{{ url_for('productList.products') }}">Browse Cars</a>
+            <div class="account-panel" style="text-align:center;padding:54px 28px;">
+                <p class="account-kicker">Nothing here yet</p>
+                <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);margin:0 0 14px;">No orders yet</h2>
+                <p class="empty-copy">Your completed purchases will appear here.</p>
+                <a class="account-action-btn" href="{{ url_for('productList.products') }}">Browse Cars</a>
             </div>
         {% endif %}
+
     </section>
 </main>
 {% endblock %}

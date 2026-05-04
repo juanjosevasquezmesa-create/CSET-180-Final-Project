@@ -59,7 +59,7 @@
                                     {% if session.get("role") == "customer" %}
                                         <button class="add-cart-btn" type="button" data-variation-id="{{ cart_variant.var_id }}">Add to Cart</button>
                                     {% elif session.get("role") == "vendor" %}
-                                        <a class="add-cart-btn" href="{{ url_for('vAccount.vendorAcc') }}">Manage Inventory</a>
+                                        <a class="add-cart-btn" href="{{ url_for('vendor_account.vendor_account') }}">Manage Inventory</a>
                                     {% else %}
                                         <a class="add-cart-btn" href="{{ url_for('login.login') }}">Log In to Buy</a>
                                     {% endif %}
