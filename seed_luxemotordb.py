@@ -76,9 +76,9 @@ def seed_users(session: Session) -> dict[str, User]:
             isVerified="verified",
         ),
         "vendor_1": User(
-            name="Marco Vendes",
-            email="marco@luxemotor.com",
-            username="marcoSales",
+            name="Shane Mcraw",
+            email="shane@luxemotor.com",
+            username="shaneSales",
             password=generate_password_hash("123"),
             role="vendor",
             isVerified="verified",

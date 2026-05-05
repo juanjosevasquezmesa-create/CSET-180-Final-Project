@@ -248,15 +248,29 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-                                        <span class="pill pill-pending" style="background:#23201a;color:#cfb37c;padding:7px 22px;font-size:1rem;font-weight:700;box-shadow:0 2px 8px 0 rgba(0,0,0,0.12);border-radius:18px;letter-spacing:0.03em;">{{ c.complaint.demand|replace('_',' ')|title }}</span>
-                                        {% if c.complaint.demand == 'refund' %}
-                                            <span style="background:#2d2a26;color:#f7f1e6;padding:6px 18px;border-radius:16px;font-size:0.92rem;font-weight:600;">Refund</span>
-                                        {% elif c.complaint.demand == 'warranty_claim' %}
-                                            <span style="background:#2d2a26;color:#f7f1e6;padding:6px 18px;border-radius:16px;font-size:0.92rem;font-weight:600;">Warranty Claim</span>
-                                        {% endif %}
+                                    <div style="display:flex;align-items:flex-start;gap:0;">
+                                        <span class="demand-bubble">{{ c.complaint.demand|replace('_',' ')|title }}</span>
                                     </div>
                                 </td>
+                                {% block styles %}
+                                    {{ super() }}
+                                    <style>
+                                    .demand-bubble {
+                                        background: linear-gradient(135deg, #cfb37c, #f0dfbb);
+                                        color: #151311;
+                                        padding: 8px 28px;
+                                        font-size: 1rem;
+                                        font-weight: 800;
+                                        border-radius: 18px;
+                                        letter-spacing: 0.03em;
+                                        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+                                        margin-left: 0;
+                                        text-align: left;
+                                        display: inline-block;
+                                        min-width: 120px;
+                                    }
+                                    </style>
+                                {% endblock %}
                                 <td>
                                     {% set s = c.complaint.status %}
                                     <span class="pill pill-{{ s }}">{{ s|title }}</span>
