@@ -11,6 +11,11 @@
     background-size: cover;
 }
 
+.account-page,
+.account-page * {
+    min-width: 0;
+}
+
 .account-shell {
     width: min(1180px, 100%);
     margin: 0 auto;
@@ -302,7 +307,10 @@
 /* ── Responsive ── */
 
 @media (max-width: 900px) {
-    .account-page { padding: 132px 18px 56px; }
+    .account-page {
+        padding: 132px 18px 56px;
+        background-attachment: scroll;
+    }
     .account-grid { grid-template-columns: 1fr 1fr; }
 }
 
@@ -327,5 +335,66 @@
 
     .account-actions {
         flex-wrap: wrap;
+    }
+
+    .account-header-card {
+        align-items: flex-start;
+        padding: 20px;
+    }
+
+    .account-panel,
+    .orders-panel {
+        padding: 20px;
+    }
+
+    .account-action-btn {
+        width: 100%;
+        padding-inline: 16px;
+        text-align: center;
+    }
+
+    .account-total {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 640px) {
+    body.menu-open .account-page {
+        visibility: hidden;
+    }
+
+    .account-heading {
+        text-align: center;
+    }
+
+    .account-header-row {
+        align-items: stretch;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .account-stat {
+        padding: 20px;
+    }
+
+    .account-stat strong {
+        font-size: 2.35rem;
+    }
+}
+
+@media (max-width: 420px) {
+    .account-page {
+        padding-inline: 10px;
+    }
+
+    .account-header-card {
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .account-panel,
+    .orders-panel {
+        padding: 18px 16px;
     }
 }

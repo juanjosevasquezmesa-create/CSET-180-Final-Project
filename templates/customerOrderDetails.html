@@ -216,6 +216,36 @@
             font-size: 1.6rem;
             color: #f0dfbb;
         }
+
+        @media (max-width: 760px) {
+            .summary-panel {
+                position: static;
+            }
+            .item-card {
+                padding: 18px 16px;
+            }
+            .item-header,
+            .summary-total {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .item-price-tag {
+                white-space: normal;
+            }
+            .toggle-btn,
+            .submit-review-btn,
+            .submit-complaint-btn {
+                width: 100%;
+                justify-content: center;
+                min-height: 42px;
+            }
+            .form-row,
+            .form-group,
+            .input-sm {
+                width: 100%;
+            }
+        }
     </style>
 {% endblock %}
 

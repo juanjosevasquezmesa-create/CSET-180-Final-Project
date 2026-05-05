@@ -5,6 +5,40 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/products.css') }}">
 {% endblock %}
 
+{% block scripts %}
+    <script>
+        const mobileCardMedia = window.matchMedia("(max-width: 640px)");
+        const interactiveSelector = "a, button, input, select, textarea";
+
+        document.querySelectorAll(".car-card").forEach((card) => {
+            card.addEventListener("click", (event) => {
+                if (!mobileCardMedia.matches || event.target.closest(interactiveSelector)) {
+                    return;
+                }
+
+                card.classList.toggle("is-flipped");
+            });
+
+            card.addEventListener("keydown", (event) => {
+                if (!mobileCardMedia.matches || !["Enter", " "].includes(event.key)) {
+                    return;
+                }
+
+                event.preventDefault();
+                card.classList.toggle("is-flipped");
+            });
+        });
+
+        mobileCardMedia.addEventListener("change", (event) => {
+            if (!event.matches) {
+                document.querySelectorAll(".car-card.is-flipped").forEach((card) => {
+                    card.classList.remove("is-flipped");
+                });
+            }
+        });
+    </script>
+{% endblock %}
+
 {% block title %}Browse Cars | Lux Auto{% endblock %}
 
 {% block body %}

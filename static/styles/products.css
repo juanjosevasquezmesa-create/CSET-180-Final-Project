@@ -11,6 +11,11 @@
     background-size: cover;
 }
 
+.products-page,
+.products-page * {
+    min-width: 0;
+}
+
 .products-hero,
 .products-list {
     width: 100%;
@@ -313,6 +318,7 @@ body, html {
 @media (max-width: 900px) {
     .products-page {
         padding: 132px 18px 56px;
+        background-attachment: scroll;
     }
 
     .car-card {
@@ -350,7 +356,8 @@ body, html {
     }
 
     .car-card {
-        min-height: 520px;
+        min-height: 620px;
+        perspective: 1600px;
     }
 
     .car-card-inner,
@@ -358,9 +365,34 @@ body, html {
         min-height: 100%;
     }
 
+    .car-card-inner {
+        display: block;
+    }
+
+    .car-card:hover .car-card-inner,
+    .car-card:focus .car-card-inner,
+    .car-card:focus-within .car-card-inner {
+        transform: none;
+    }
+
+    .car-card.is-flipped .car-card-inner {
+        transform: rotateX(180deg);
+    }
+
+    .car-face {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+
+    .car-media {
+        min-height: 100%;
+    }
+
     .car-name,
     .car-details {
-        padding: 22px;
+        padding: 20px;
     }
 
     .detail-topline {
@@ -381,5 +413,28 @@ body, html {
         width: 100%;
         justify-content: space-between;
         border-radius: 8px;
+    }
+}
+
+@media (max-width: 420px) {
+    .products-page {
+        padding-inline: 10px;
+    }
+
+    .car-media {
+        min-height: 260px;
+    }
+
+    .car-name,
+    .car-details {
+        padding: 16px;
+    }
+
+    .price {
+        font-size: 1.55rem;
+    }
+
+    .car-card {
+        min-height: 660px;
     }
 }
