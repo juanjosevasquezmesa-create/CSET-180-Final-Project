@@ -252,25 +252,7 @@
                                         <span class="demand-bubble">{{ c.complaint.demand|replace('_',' ')|title }}</span>
                                     </div>
                                 </td>
-                                {% block styles %}
-                                    {{ super() }}
-                                    <style>
-                                    .demand-bubble {
-                                        background: linear-gradient(135deg, #cfb37c, #f0dfbb);
-                                        color: #151311;
-                                        padding: 8px 28px;
-                                        font-size: 1rem;
-                                        font-weight: 800;
-                                        border-radius: 18px;
-                                        letter-spacing: 0.03em;
-                                        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
-                                        margin-left: 0;
-                                        text-align: left;
-                                        display: inline-block;
-                                        min-width: 120px;
-                                    }
-                                    </style>
-                                {% endblock %}
+                                <!-- Removed duplicate block styles. Demand bubble CSS moved to top styles block. -->
                                 <td>
                                     {% set s = c.complaint.status %}
                                     <span class="pill pill-{{ s }}">{{ s|title }}</span>
