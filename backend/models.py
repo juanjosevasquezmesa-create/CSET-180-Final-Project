@@ -95,6 +95,7 @@ class Product(Base):
     warranty_period: Mapped[str | None] = mapped_column(String(100), nullable=True)
     price: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
     created_by: Mapped[int] = mapped_column(ForeignKey("users.user_id"), nullable=False)
+    carType: Mapped[str] = mapped_column(Enum("supercar", "motorcycle", "classic"))
 
     vendor: Mapped["User"] = relationship(
         foreign_keys=[vendor_id],
