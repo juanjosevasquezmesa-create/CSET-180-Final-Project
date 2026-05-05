@@ -31,7 +31,6 @@
                     {% if session.get("role") == "customer" %}
                         <a href="/cart">Cart</a>
                     {% endif %}
-                    <a href="{{ url_for('index.index') }}#contact">Contact</a>
                     {% if session.get("user_id") %}
                         {% if session.get('role') == 'admin' %}
                             <a href="{{ url_for('admin_account.admin_account') }}">Account</a>

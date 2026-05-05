@@ -5,6 +5,11 @@
     isolation: isolate;
 }
 
+.cart-page,
+.cart-page * {
+    min-width: 0;
+}
+
 .cart-page::before {
     content: "";
     position: fixed;
@@ -270,9 +275,44 @@
 
     .cart-row {
         grid-template-columns: 1fr;
+        padding: 18px 16px;
     }
 
     .cart-row-total {
         text-align: left;
+    }
+
+    .cart-heading {
+        text-align: center;
+    }
+
+    .continue-link {
+        width: 100%;
+        text-align: center;
+    }
+
+    .cart-summary,
+    .empty-cart-state {
+        padding: 20px 16px;
+    }
+
+    .quantity-control {
+        width: 100%;
+        max-width: 220px;
+    }
+
+    .empty-cart-state .checkout-action {
+        width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+    .cart-page {
+        padding-inline: 10px;
+    }
+
+    .summary-line,
+    .cart-heading {
+        gap: 12px;
     }
 }

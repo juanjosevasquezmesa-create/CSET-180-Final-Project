@@ -150,6 +150,53 @@
             flex-wrap: wrap;
             padding: 28px;
         }
+
+        @media (max-width: 760px) {
+            .admin-tabs {
+                overflow-x: auto;
+                padding-bottom: 8px;
+                scrollbar-width: none;
+            }
+            .admin-tabs::-webkit-scrollbar { display: none; }
+            .admin-tab {
+                flex: 0 0 auto;
+                padding: 10px 16px;
+            }
+            .admin-panel {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .admin-panel-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 10px;
+                padding: 16px;
+            }
+            .admin-table {
+                min-width: 680px;
+            }
+            .admin-table th,
+            .admin-table td {
+                padding: 12px 14px;
+            }
+            .action-form {
+                display: flex;
+                gap: 8px;
+            }
+            .action-select,
+            .action-btn {
+                min-height: 38px;
+            }
+            .quick-nav {
+                padding: 18px 16px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .quick-nav .account-action-btn {
+                width: 100%;
+            }
+        }
     </style>
 {% endblock %}
 

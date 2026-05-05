@@ -152,6 +152,26 @@
         .btn-ghost { border: 1px solid rgba(255,255,255,0.18); color: #f7f1e6; }
         .empty-notice { text-align: center; padding: 48px 24px; color: rgba(247, 241, 230, 0.5); }
         .empty-notice h2 { font-family: "Cormorant Garamond", serif; font-size: 1.8rem; margin-bottom: 10px; color: #f7f1e6; }
+        @media (max-width: 640px) {
+            .checkout-grid { gap: 18px; }
+            .payment-panel, .order-panel { padding: 20px 16px; }
+            .payment-type, .field-row, .success-actions { flex-direction: column; }
+            .payment-type { display: grid; grid-template-columns: 1fr; }
+            .field-row { grid-template-columns: 1fr; }
+            .payment-type label { min-height: 48px; }
+            .order-item { align-items: flex-start; flex-direction: column; }
+            .order-total-line {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .order-total-amount { font-size: 1.35rem; }
+            .success-banner {
+                align-items: flex-start;
+                padding: 16px;
+            }
+            .success-actions a { width: 100%; }
+        }
     </style>
 {% endblock %}
 

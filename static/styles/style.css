@@ -16,6 +16,19 @@ body {
         linear-gradient(180deg, #161613 0%, #0b0b0a 100%);
 }
 
+img,
+video,
+svg {
+    max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+    max-width: 100%;
+}
+
 body.menu-open {
     overflow: hidden;
 }
@@ -523,6 +536,10 @@ a {
     .actions {
         margin-top: 24px;
     }
+
+    .actions .btn {
+        flex: 1 1 100%;
+    }
 }
 
 @media (max-width: 420px) {
@@ -1017,4 +1034,49 @@ a {
     padding: 16px;
     color: #ff6b6b;
     font-size: 0.85rem;
+}
+
+@media (max-width: 640px) {
+    .float-buttons {
+        right: 14px;
+        bottom: 14px;
+        gap: 10px;
+    }
+
+    .float-btn {
+        width: 50px;
+        height: 50px;
+    }
+
+    .popup {
+        left: 12px;
+        right: 12px;
+        bottom: 78px;
+        width: auto;
+        max-height: min(620px, calc(100svh - 104px));
+        border-radius: 10px;
+    }
+
+    .popup-header,
+    .chat-header,
+    .popup-footer {
+        padding: 12px;
+    }
+
+    .cart-item {
+        flex-direction: column;
+    }
+
+    .cart-item-total {
+        width: 100%;
+        text-align: left;
+    }
+
+    .message-form {
+        flex-direction: column;
+    }
+
+    .send-message-btn {
+        min-height: 42px;
+    }
 }

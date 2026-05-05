@@ -5,6 +5,11 @@
     isolation: isolate;
 }
 
+.edit-page,
+.edit-page * {
+    min-width: 0;
+}
+
 .edit-page::before {
     content: "";
     position: fixed;
@@ -255,5 +260,21 @@
     .variation-row,
     .variation-row.new-row {
         grid-template-columns: 1fr;
+    }
+
+    .variation-row,
+    .variation-row.new-row {
+        padding: 14px;
+    }
+}
+
+@media (max-width: 420px) {
+    .edit-page {
+        padding-inline: 10px;
+    }
+
+    .form-section {
+        padding: 18px 16px;
+        border-radius: 12px;
     }
 }
