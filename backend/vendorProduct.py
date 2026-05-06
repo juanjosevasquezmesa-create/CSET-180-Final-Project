@@ -1,10 +1,49 @@
 from decimal import Decimal, InvalidOperation
+import os
 
 from flask import Blueprint, abort, flash, redirect, render_template, session, url_for, request
 from sqlalchemy import select, delete
 from sqlalchemy.orm import Session, selectinload
+from werkzeug.utils import secure_filename
 
 from .models import CartItem, OrderItem, Product, ProductVariation, User,  engine
+
+ALLOWED_IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "webp", "gif"}
+IMAGE_UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "..", "static", "images", "products")
+os.makedirs(IMAGE_UPLOAD_FOLDER, exist_ok=True)
+
+def _allowed_image(image_file):
+    filename = image_file.filename or ""
+    if "." not in filename:
+        return False
+
+    ext = filename.rsplit(".", 1)[1].lower()
+    if ext not in ALLOWED_IMAGE_EXTENSIONS:
+        return False
+
+    mimetype = image_file.mimetype or ""
+    return mimetype.startswith("image/")
+
+
+def _save_product_image(product_id, image):
+    if not image or not image.filename:
+        return None
+
+    if not _allowed_image(image):
+        return None
+
+    ext = secure_filename(image.filename).rsplit(".", 1)[1].lower()
+    filename = f"product_{product_id}.{ext}"
+    filepath = os.path.join(IMAGE_UPLOAD_FOLDER, filename)
+
+    for old_ext in ALLOWED_IMAGE_EXTENSIONS:
+        old_path = os.path.join(IMAGE_UPLOAD_FOLDER, f"product_{product_id}.{old_ext}")
+        if old_path != filepath and os.path.exists(old_path):
+            os.remove(old_path)
+
+    image.stream.seek(0)
+    image.save(filepath)
+    return filename
 
 vendor_Product_bp = Blueprint("vendorProduct", __name__, url_prefix="/account/vendor/")
 
@@ -131,6 +170,16 @@ def productAdd():
             variations=variations,
         )
         session_db.add(product)
+        session_db.flush()
+
+        image = request.files.get("image")
+        if image and image.filename:
+            saved_filename = _save_product_image(product.product_id, image)
+            if not saved_filename:
+                session_db.rollback()
+                flash("Upload must be a valid image file (jpg, jpeg, png, webp, gif).", "error")
+                return render_template("vendorAdd.html"), 400
+
         session_db.commit()
 
     flash("Product added successfully.", "success")
@@ -274,6 +323,14 @@ def productEdit(product_id):
                     stock=stock,
                 )
             )
+
+        image = request.files.get("image")
+        if image and image.filename:
+            saved_filename = _save_product_image(product.product_id, image)
+            if not saved_filename:
+                session_db.rollback()
+                flash("Upload must be a valid image file (jpg, jpeg, png, webp, gif).", "error")
+                return render_template("vendorEdit.html", product=product), 400
 
         session_db.commit()
         flash("Product updated successfully.", "success")

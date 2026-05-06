@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from werkzeug.security import generate_password_hash
 
 from backend.models import (
+    Base,
     CartItem,
     ChatParticipant,
     Complaint,
@@ -341,6 +342,8 @@ def seed_feedback_and_chat(session, users, products, order_items):
 
 
 def main():
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
     with Session(engine) as session:
         clear_existing_data(session)
         reset_auto_increment(session)

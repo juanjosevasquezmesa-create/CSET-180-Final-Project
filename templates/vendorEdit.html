@@ -24,7 +24,7 @@
             {% endif %}
         {% endwith %}
 
-        <form class="edit-form" method="POST">
+        <form class="edit-form" method="POST" enctype="multipart/form-data">
             <section class="form-section">
                 <div class="section-heading">
                     <h2>Product Details</h2>
@@ -53,6 +53,11 @@
                     <label class="field wide">
                         <span>Description</span>
                         <textarea name="description" rows="5">{{ product.description or '' }}</textarea>
+                    </label>
+
+                    <label class="field wide">
+                        <span>Front Card Image</span>
+                        <input type="file" name="image" accept="image/*">
                     </label>
                 </div>
             </section>

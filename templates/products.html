@@ -51,11 +51,8 @@
                     <article class="car-card" tabindex="0">
                         <div class="car-card-inner">
                             <div class="car-media car-face car-front" {% if car.display_image_url %}style="--car-image: url('{{ car.display_image_url }}');"{% endif %}>
-                                {% set image = car.images|first if car.images is defined else none %}
-                                {% if image and image.img_url is defined and image.img_url %}
-                                    <img src="{{ image.img_url }}" alt="{{ car.model }}">
-                                {% elif image and image.image_url is defined and image.image_url %}
-                                    <img src="{{ image.image_url }}" alt="{{ car.model }}">
+                                {% if car.display_image_url %}
+                                    <img src="{{ car.display_image_url }}" alt="{{ car.model }}">
                                 {% else %}
                                     <div class="car-placeholder" aria-hidden="true"></div>
                                 {% endif %}
