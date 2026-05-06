@@ -103,9 +103,8 @@
 .car-back {
     transform: rotateX(180deg);
     background:
-        linear-gradient(180deg, rgba(10, 10, 9, 0.46), rgba(10, 10, 9, 0.66)),
-        linear-gradient(110deg, rgba(0, 0, 0, 0.44), rgba(0, 0, 0, 0.08) 58%, rgba(0, 0, 0, 0.34)),
-        url("https://images.unsplash.com/photo-1529186405194-c57220dec7c0?auto=format&fit=crop&w=1800&q=85");
+        linear-gradient(180deg, rgba(18, 18, 18, 0.96), rgba(40, 40, 40, 0.96)),
+        linear-gradient(160deg, rgba(255, 255, 255, 0.04), transparent 60%);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

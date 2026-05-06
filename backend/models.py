@@ -381,19 +381,3 @@ class Message(Base):
 
 
 Base.metadata.create_all(engine)
-
-
-with Session(engine) as event:
-    exists = event.scalars(select(User).where(User.email == "admin@tsct.com")).first()
-    if not exists:
-        event.add(
-            User(
-                name="Admin",
-                username="admin",
-                email="admin@tsct.com",
-                password=generate_password_hash("adminPW"),
-                role="admin",
-                isVerified="verified"
-            )
-        )
-        event.commit()

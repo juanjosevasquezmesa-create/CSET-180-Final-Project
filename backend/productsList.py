@@ -1,9 +1,15 @@
-from flask import Blueprint, render_template, session
+import os
+
+from flask import Blueprint, render_template, session, url_for
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.orm import Session
 
 from .models import Product, engine
+
+ALLOWED_IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "webp", "gif"}
+IMAGE_UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "..", "static", "images", "products")
+os.makedirs(IMAGE_UPLOAD_FOLDER, exist_ok=True)
 
 
 productList_bp = Blueprint("productList", __name__, url_prefix="/products")
@@ -31,5 +37,12 @@ def products():
 
     for product in products:
         product.display_image_url = PRODUCT_IMAGES.get(product.model)
+        for ext in ALLOWED_IMAGE_EXTENSIONS:
+            filename = f"product_{product.product_id}.{ext}"
+            filepath = os.path.join(IMAGE_UPLOAD_FOLDER, filename)
+            if os.path.exists(filepath):
+                product.display_image_url = url_for("static", filename=f"images/products/{filename}")
+                product.display_image_url += f"?v={int(os.path.getmtime(filepath))}"
+                break
 
     return render_template("products.html", products=products, session=session)
