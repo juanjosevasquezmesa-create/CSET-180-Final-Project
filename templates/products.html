@@ -7,23 +7,17 @@
 
 {% block scripts %}
     <script>
+        /* ── Mobile card flip ─────────────────────────────────────────── */
         const mobileCardMedia = window.matchMedia("(max-width: 640px)");
         const interactiveSelector = "a, button, input, select, textarea";
 
         document.querySelectorAll(".car-card").forEach((card) => {
             card.addEventListener("click", (event) => {
-                if (!mobileCardMedia.matches || event.target.closest(interactiveSelector)) {
-                    return;
-                }
-
+                if (!mobileCardMedia.matches || event.target.closest(interactiveSelector)) return;
                 card.classList.toggle("is-flipped");
             });
-
             card.addEventListener("keydown", (event) => {
-                if (!mobileCardMedia.matches || !["Enter", " "].includes(event.key)) {
-                    return;
-                }
-
+                if (!mobileCardMedia.matches || !["Enter", " "].includes(event.key)) return;
                 event.preventDefault();
                 card.classList.toggle("is-flipped");
             });
@@ -31,94 +25,246 @@
 
         mobileCardMedia.addEventListener("change", (event) => {
             if (!event.matches) {
-                document.querySelectorAll(".car-card.is-flipped").forEach((card) => {
-                    card.classList.remove("is-flipped");
-                });
+                document.querySelectorAll(".car-card.is-flipped").forEach((c) => c.classList.remove("is-flipped"));
             }
         });
+
+        /* ── Filter panel: price slider ↔ number sync ────────────────── */
+        const filterForm     = document.querySelector('.filter-form');
+        const sortRadios     = document.querySelectorAll('.filter-form input[type="radio"]');
+        const minSlider      = document.getElementById('min_price');
+        const maxSlider      = document.getElementById('max_price');
+        const minNumber      = document.getElementById('min_price_number');
+        const maxNumber      = document.getElementById('max_price_number');
+        const minLabel       = document.getElementById('minPriceValue');
+        const maxLabel       = document.getElementById('maxPriceValue');
+
+        function fmt(v) { return '$' + Number(v).toLocaleString(); }
+
+        function updateLabels() {
+            if (minSlider && minLabel) minLabel.textContent = fmt(minSlider.value);
+            if (maxSlider && maxLabel) maxLabel.textContent = fmt(maxSlider.value);
+        }
+
+        function syncFromSlider() {
+            if (minSlider && minNumber) minNumber.value = minSlider.value;
+            if (maxSlider && maxNumber) maxNumber.value = maxSlider.value;
+            updateLabels();
+        }
+
+        function syncFromNumber() {
+            if (minSlider && minNumber) minSlider.value = minNumber.value || minSlider.min;
+            if (maxSlider && maxNumber) maxSlider.value = maxNumber.value || maxSlider.max;
+            updateLabels();
+        }
+
+        /* Auto-submit on radio change */
+        sortRadios.forEach((r) => r.addEventListener('change', () => filterForm && filterForm.submit()));
+
+        /* Sliders auto-submit on release */
+        [minSlider, maxSlider].forEach((el) => {
+            if (!el) return;
+            el.addEventListener('input',  syncFromSlider);
+            el.addEventListener('change', () => filterForm && filterForm.submit());
+        });
+
+        /* Number inputs auto-submit on blur/enter */
+        [minNumber, maxNumber].forEach((el) => {
+            if (!el) return;
+            el.addEventListener('input',  syncFromNumber);
+            el.addEventListener('change', () => { syncFromNumber(); filterForm && filterForm.submit(); });
+        });
+
+        syncFromNumber();
     </script>
 {% endblock %}
 
 {% block title %}Browse Cars | Lux Auto{% endblock %}
 
 {% block body %}
-    <main class="products-page">
-       
+<main class="products-page">
 
-        <section class="products-list" aria-label="Cars for sale">
-            {% if products %}
-                {% for car in products %}
-                    <article class="car-card" tabindex="0">
-                        <div class="car-card-inner">
-                            <div class="car-media car-face car-front" {% if car.display_image_url %}style="--car-image: url('{{ car.display_image_url }}');"{% endif %}>
-                                {% if car.display_image_url %}
-                                    <img src="{{ car.display_image_url }}" alt="{{ car.model }}">
-                                {% else %}
-                                    <div class="car-placeholder" aria-hidden="true"></div>
-                                {% endif %}
-                                <div class="car-name">
-                                    <p>Model</p>
-                                    <h2>{{ car.model }}</h2>
-                                </div>
-                            </div>
+    <!-- ── Filter / Sort Panel ──────────────────────────────────────────── -->
+    <form
+        action="/products/1"
+        method="GET"
+        class="filter-form"
+    >
+        <div class="filter-inner">
 
-                            <div class="car-details car-face car-back">
-                                <div class="detail-topline">
-                                    <span class="price">${{ "{:,.2f}".format(car.price) }}</span>
-                                    {% if car.vendor is defined and car.vendor %}
-                                        <span class="vendor">{{ car.vendor.name }}</span>
-                                    {% endif %}
-                                </div>
+            <!-- Sort by -->
+            <div class="filter-group">
+                <span class="filter-group-label">Sort By</span>
+                <div class="filter-options">
+                    {% for col, label in [('product_id','Original'), ('model','Model'), ('price','Price'), ('warranty_period','Warranty')] %}
+                        <label class="filter-chip {% if sort_by == col %}is-active{% endif %}">
+                            <input type="radio" name="sort_by" value="{{ col }}" {% if sort_by == col %}checked{% endif %}>
+                            {{ label }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
 
-                                {% if car.description %}
-                                    <p class="description">{{ car.description }}</p>
-                                {% endif %}
+            <!-- Direction -->
+            <div class="filter-group">
+                <span class="filter-group-label">Direction</span>
+                <div class="filter-options">
+                    <label class="filter-chip {% if sort_dir == 'asc' %}is-active{% endif %}">
+                        <input type="radio" name="sort_dir" value="asc" {% if sort_dir == 'asc' %}checked{% endif %}>
+                        Ascending
+                    </label>
+                    <label class="filter-chip {% if sort_dir == 'desc' %}is-active{% endif %}">
+                        <input type="radio" name="sort_dir" value="desc" {% if sort_dir == 'desc' %}checked{% endif %}>
+                        Descending
+                    </label>
+                </div>
+            </div>
 
-                                <dl class="spec-grid">
-                                    <div>
-                                        <dt>Warranty</dt>
-                                        <dd>{{ car.warranty_period or "Contact vendor" }}</dd>
-                                    </div>
-                                    <div>
-                                        <dt>Product ID</dt>
-                                        <dd>#{{ car.product_id }}</dd>
-                                    </div>
-                                </dl>
+            <!-- Model search -->
+            <div class="filter-group">
+                <span class="filter-group-label">Search Model</span>
+                <input
+                    type="text"
+                    name="model_filter"
+                    class="filter-text-input"
+                    placeholder="e.g. Ferrari…"
+                    value="{{ model_filter }}"
+                >
+            </div>
 
-                                {% if car.variations is defined and car.variations %}
-                                    {% set cart_variant = car.variations|first %}
-                                    {% if session.get("role") == "customer" %}
-                                        <button class="add-cart-btn" type="button" data-variation-id="{{ cart_variant.var_id }}">Add to Cart</button>
-                                    {% elif session.get("role") == "vendor" %}
-                                        <a class="add-cart-btn" href="{{ url_for('vendor_account.vendor_account') }}">Go to Vendor Dashboard</a>
-                                    {% else %}
-                                        <a class="add-cart-btn" href="{{ url_for('login.login') }}">Log In to Buy</a>
-                                    {% endif %}
+            <div class="filter-submit-wrap">
+                <button type="submit" class="filter-submit-btn">Apply</button>
+                <a href="/products/1" class="filter-reset-btn">Reset</a>
+            </div>
+        </div>
+    </form>
 
-                                    <div class="variants">
-                                        <h3>Available Options</h3>
-                                        <div class="variant-list">
-                                            {% for variant in car.variations %}
-                                                <span class="variant-chip">
-                                                    {{ variant.year }} {{ variant.color }}
-                                                    <strong>{{ variant.stock }} in stock</strong>
-                                                </span>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% else %}
-                                    <button class="add-cart-btn" type="button" disabled>Unavailable</button>
-                                {% endif %}
+    <!-- ── Pagination (top) ────────────────────────────────────────────── -->
+    {% if total_pages > 1 %}
+    <div class="pagination-bar">
+        {% if page - 3 >= 1 %}
+            <a href="/products/{{ page - 3 }}?sort_by={{ sort_by }}&sort_dir={{ sort_dir }}&min_price={{ min_price }}&max_price={{ max_price }}&model_filter={{ model_filter }}" class="pg-btn">&lsaquo;</a>
+        {% endif %}
+        {% if page - 2 >= 1 %}
+            <a href="/products/{{ page - 2 }}?sort_by={{ sort_by }}&sort_dir={{ sort_dir }}&min_price={{ min_price }}&max_price={{ max_price }}&model_filter={{ model_filter }}" class="pg-btn">{{ page - 2 }}</a>
+        {% endif %}
+        {% if page > 1 %}
+            <a href="/products/{{ page - 1 }}?sort_by={{ sort_by }}&sort_dir={{ sort_dir }}&min_price={{ min_price }}&max_price={{ max_price }}&model_filter={{ model_filter }}" class="pg-btn">{{ page - 1 }}</a>
+        {% endif %}
+        <span class="pg-btn is-active">{{ page }}</span>
+        {% if page + 1 <= total_pages %}
+            <a href="/products/{{ page + 1 }}?sort_by={{ sort_by }}&sort_dir={{ sort_dir }}&min_price={{ min_price }}&max_price={{ max_price }}&model_filter={{ model_filter }}" class="pg-btn">{{ page + 1 }}</a>
+        {% endif %}
+        {% if page + 2 <= total_pages %}
+            <a href="/products/{{ page + 2 }}?sort_by={{ sort_by }}&sort_dir={{ sort_dir }}&min_price={{ min_price }}&max_price={{ max_price }}&model_filter={{ model_filter }}" class="pg-btn">{{ page + 2 }}</a>
+        {% endif %}
+        {% if page + 3 <= total_pages %}
+            <a href="/products/{{ page + 3 }}?sort_by={{ sort_by }}&sort_dir={{ sort_dir }}&min_price={{ min_price }}&max_price={{ max_price }}&model_filter={{ model_filter }}" class="pg-btn">&rsaquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- ── Product cards (unchanged layout) ───────────────────────────── -->
+    <section class="products-list" aria-label="Cars for sale">
+        {% if products %}
+            {% for car in products %}
+                <article class="car-card" tabindex="0">
+                    <div class="car-card-inner">
+                        <div class="car-media car-face car-front" {% if car.display_image_url %}style="--car-image: url('{{ car.display_image_url }}');"{% endif %}>
+                            {% if car.display_image_url %}
+                                <img src="{{ car.display_image_url }}" alt="{{ car.model }}">
+                            {% else %}
+                                <div class="car-placeholder" aria-hidden="true"></div>
+                            {% endif %}
+                            <div class="car-name">
+                                <p>Model</p>
+                                <h2>{{ car.model }}</h2>
                             </div>
                         </div>
-                    </article>
-                {% endfor %}
-            {% else %}
-                <div class="empty-state">
-                    <h2>No cars listed yet</h2>
-                    <p>Once vehicles are added to the database, they will appear here.</p>
-                </div>
-            {% endif %}
-        </section>
-    </main>
+
+                        <div class="car-details car-face car-back">
+                            <div class="detail-topline">
+                                <span class="price">${{ "{:,.2f}".format(car.price) }}</span>
+                                {% if car.vendor %}
+                                    <span class="vendor">{{ car.vendor.name }}</span>
+                                {% endif %}
+                            </div>
+
+                            {% if car.description %}
+                                <p class="description">{{ car.description }}</p>
+                            {% endif %}
+
+                            <dl class="spec-grid">
+                                <div>
+                                    <dt>Warranty</dt>
+                                    <dd>{{ car.warranty_period or "Contact vendor" }}</dd>
+                                </div>
+                                <div>
+                                    <dt>Product ID</dt>
+                                    <dd>#{{ car.product_id }}</dd>
+                                </div>
+                            </dl>
+
+                            {% if car.variations %}
+                                {% set cart_variant = car.variations|first %}
+                                {% if session.get("role") == "customer" %}
+                                    <button class="add-cart-btn" type="button" data-variation-id="{{ cart_variant.var_id }}">Add to Cart</button>
+                                {% elif session.get("role") == "vendor" %}
+                                    <a class="add-cart-btn" href="{{ url_for('vendor_account.vendor_account') }}">Go to Vendor Dashboard</a>
+                                {% else %}
+                                    <a class="add-cart-btn" href="{{ url_for('login.login') }}">Log In to Buy</a>
+                                {% endif %}
+
+                                <div class="variants">
+                                    <h3>Available Options</h3>
+                                    <div class="variant-list">
+                                        {% for variant in car.variations %}
+                                            <span class="variant-chip">
+                                                {{ variant.year }} {{ variant.color }}
+                                                <strong>{{ variant.stock }} in stock</strong>
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <button class="add-cart-btn" type="button" disabled>Unavailable</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <h2>No cars found</h2>
+                <p>Try adjusting your filters or <a href="/products/1">clearing them</a> to see all vehicles.</p>
+            </div>
+        {% endif %}
+    </section>
+
+    <!-- ── Pagination (bottom) ─────────────────────────────────────────── -->
+    {% if total_pages > 1 %}
+    <div class="pagination-bar pagination-bar--bottom">
+        {% if page - 3 >= 1 %}
+            <a href="/products/{{ page - 3 }}?sort_by={{ sort_by }}&sort_dir={{ sort_dir }}&min_price={{ min_price }}&max_price={{ max_price }}&model_filter={{ model_filter }}" class="pg-btn">&lsaquo;</a>
+        {% endif %}
+        {% if page - 2 >= 1 %}
+            <a href="/products/{{ page - 2 }}?sort_by={{ sort_by }}&sort_dir={{ sort_dir }}&min_price={{ min_price }}&max_price={{ max_price }}&model_filter={{ model_filter }}" class="pg-btn">{{ page - 2 }}</a>
+        {% endif %}
+        {% if page > 1 %}
+            <a href="/products/{{ page - 1 }}?sort_by={{ sort_by }}&sort_dir={{ sort_dir }}&min_price={{ min_price }}&max_price={{ max_price }}&model_filter={{ model_filter }}" class="pg-btn">{{ page - 1 }}</a>
+        {% endif %}
+        <span class="pg-btn is-active">{{ page }}</span>
+        {% if page + 1 <= total_pages %}
+            <a href="/products/{{ page + 1 }}?sort_by={{ sort_by }}&sort_dir={{ sort_dir }}&min_price={{ min_price }}&max_price={{ max_price }}&model_filter={{ model_filter }}" class="pg-btn">{{ page + 1 }}</a>
+        {% endif %}
+        {% if page + 2 <= total_pages %}
+            <a href="/products/{{ page + 2 }}?sort_by={{ sort_by }}&sort_dir={{ sort_dir }}&min_price={{ min_price }}&max_price={{ max_price }}&model_filter={{ model_filter }}" class="pg-btn">{{ page + 2 }}</a>
+        {% endif %}
+        {% if page + 3 <= total_pages %}
+            <a href="/products/{{ page + 3 }}?sort_by={{ sort_by }}&sort_dir={{ sort_dir }}&min_price={{ min_price }}&max_price={{ max_price }}&model_filter={{ model_filter }}" class="pg-btn">&rsaquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</main>
 {% endblock %}
