@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const chatToggleBtn = document.getElementById('chat-toggle-btn');
     const chatPopup = document.getElementById('chat-popup');
-    const chatCloseBtn = document.getElementById('chat-close-btn');
     
     // Track active chat complaints in sessionStorage
     let activeComplaints = JSON.parse(sessionStorage.getItem('activeComplaints')) || [];
+    let currentComplaintId = null;
     
     // Cart Toggle
     if (cartToggleBtn && cartPopup) {
@@ -84,26 +84,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Chat Toggle
     if (chatToggleBtn && chatPopup) {
         chatToggleBtn.addEventListener('click', function() {
-            if (activeComplaints.length === 0) {
-                displayChatMessage('No active chats. Open a complaint from your account or order details page.');
-                chatPopup.classList.remove('hidden');
-            } else {
-                chatPopup.classList.toggle('hidden');
-                if (!chatPopup.classList.contains('hidden')) {
-                    // Load the first complaint's messages
+            chatPopup.classList.toggle('hidden');
+            if (!chatPopup.classList.contains('hidden')) {
+                if (activeComplaints.length === 0) {
+                    displayChatMessage('No active chats. Open a complaint from your account or order details page.');
+                } else {
+                    refreshActiveComplaints(true);
                     loadComplaintMessages(activeComplaints[0]);
                 }
             }
-        });
-    }
-    
-    if (chatCloseBtn) {
-        chatCloseBtn.addEventListener('click', function() {
-            chatPopup.classList.add('hidden');
-            // Clear UI only, not database
-            activeComplaints = [];
-            sessionStorage.removeItem('activeComplaints');
-            updateChatBubbleVisibility();
         });
     }
     
@@ -120,15 +109,69 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update chat bubble visibility
     function updateChatBubbleVisibility() {
-        if (activeComplaints.length > 0) {
+        if (window.userRole === 'customer' || activeComplaints.length > 0) {
             if (chatToggleBtn) chatToggleBtn.style.display = 'flex';
         } else {
             if (chatToggleBtn) chatToggleBtn.style.display = 'none';
         }
     }
-    
+
+    async function refreshActiveComplaints(showNoChats = false) {
+        if (window.userRole !== 'customer') {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/chat/active-complaints');
+            const data = await response.json();
+            activeComplaints = Array.isArray(data) ? data : [];
+            sessionStorage.setItem('activeComplaints', JSON.stringify(activeComplaints));
+            updateChatBubbleVisibility();
+
+            if (currentComplaintId && !activeComplaints.includes(currentComplaintId)) {
+                currentComplaintId = null;
+                if (activeComplaints.length > 0) {
+                    loadComplaintMessages(activeComplaints[0]);
+                } else {
+                    if (showNoChats) {
+                        displayChatMessage('No active chats. Open a complaint from your account or order details page.');
+                    }
+                    if (chatPopup) {
+                        chatPopup.classList.add('hidden');
+                    }
+                }
+            } else if (!currentComplaintId && activeComplaints.length === 0) {
+                if (showNoChats) {
+                    displayChatMessage('No active chats. Open a complaint from your account or order details page.');
+                }
+                if (chatPopup) {
+                    chatPopup.classList.add('hidden');
+                }
+            }
+        } catch (error) {
+            console.error('Error refreshing active complaints:', error);
+        }
+    }
+
     // Update on page load if there are active complaints
     updateChatBubbleVisibility();
+    
+    // For customers, fetch active complaints to populate activeComplaints
+    if (window.userRole === 'customer') {
+        fetch('/api/chat/active-complaints')
+        .then(response => response.json())
+        .then(data => {
+            activeComplaints = data;
+            sessionStorage.setItem('activeComplaints', JSON.stringify(activeComplaints));
+            updateChatBubbleVisibility();
+            setInterval(() => {
+                refreshActiveComplaints();
+            }, 10000);
+        })
+        .catch(error => {
+            console.error('Error fetching active complaints:', error);
+        });
+    }
     
     // Load cart items via API
     async function loadCartItems() {
@@ -196,6 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load messages for a specific complaint
     async function loadComplaintMessages(complaintId) {
+        currentComplaintId = complaintId;
         try {
             const response = await fetch(`/api/chat/messages/${complaintId}`);
             const data = await response.json();
@@ -227,7 +271,6 @@ document.addEventListener('DOMContentLoaded', function() {
             tabsHTML += `
                 <div class="chat-tab ${isActive}" data-complaint-id="${id}">
                     <span>${tabTitle}</span>
-                    <button class="tab-close-btn" data-complaint-id="${id}">×</button>
                 </div>
             `;
         });
@@ -238,27 +281,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Add tab click listeners
             document.querySelectorAll('.chat-tab').forEach(tab => {
-                tab.addEventListener('click', function(e) {
-                    if (!e.target.classList.contains('tab-close-btn')) {
-                        loadComplaintMessages(this.dataset.complaintId);
-                    }
-                });
-            });
-            
-            // Add tab close listeners
-            document.querySelectorAll('.tab-close-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const cId = this.dataset.complaintId;
-                    activeComplaints = activeComplaints.filter(id => id != cId);
-                    sessionStorage.setItem('activeComplaints', JSON.stringify(activeComplaints));
-                    
-                    if (activeComplaints.length === 0) {
-                        chatPopup.classList.add('hidden');
-                        updateChatBubbleVisibility();
-                    } else {
-                        loadComplaintMessages(activeComplaints[0]);
-                    }
+                tab.addEventListener('click', function() {
+                    loadComplaintMessages(this.dataset.complaintId);
                 });
             });
         }
@@ -324,6 +348,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             
             if (data.success) {
+                await refreshActiveComplaints();
                 loadComplaintMessages(complaintId);
             } else {
                 displayChatError(data.error);

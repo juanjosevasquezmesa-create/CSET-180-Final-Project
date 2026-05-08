@@ -25,8 +25,9 @@ def get_messages(complaint_id):
         # Check authorization - user must be either the customer or the handler
         is_customer = complaint.customer_id == user_id
         is_handler = complaint.handled_by == user_id
+        is_admin = session.get("role") == "admin"
         
-        if not (is_customer or is_handler):
+        if not (is_customer or is_handler or is_admin):
             return jsonify({"error": "Unauthorized"}), 403
         
         # Fetch messages related to this complaint
@@ -77,8 +78,9 @@ def send_message(complaint_id):
         # Check authorization
         is_customer = complaint.customer_id == user_id
         is_handler = complaint.handled_by == user_id
+        is_admin = session.get("role") == "admin"
         
-        if not (is_customer or is_handler):
+        if not (is_customer or is_handler or is_admin):
             return jsonify({"error": "Unauthorized"}), 403
         
         # Get or create conversation for this complaint
@@ -111,3 +113,27 @@ def send_message(complaint_id):
             "message_id": new_message.message_id,
             "sent_at": new_message.sent_at.isoformat(),
         })
+
+
+@chat_bp.route("/active-complaints", methods=["GET"])
+def get_active_complaints():
+    """Get active complaints for the current user"""
+    if "user_id" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    user_id = session["user_id"]
+    role = session.get("role")
+    
+    if role != "customer":
+        return jsonify({"error": "Unauthorized"}), 403
+    
+    with Session(engine) as session_db:
+        complaints = session_db.scalars(
+            select(Complaint).where(
+                Complaint.customer_id == user_id,
+                Complaint.status.notin_(["complete", "rejected"])
+            )
+        ).all()
+        
+        active_complaints = [c.complaint_id for c in complaints]
+        return jsonify(active_complaints)

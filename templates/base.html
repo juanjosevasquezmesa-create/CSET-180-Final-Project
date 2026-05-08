@@ -90,20 +90,21 @@
             <div id="chat-input-container" class="popup-footer">
                 <!-- Message input form will load here -->
             </div>
-            <button id="chat-close-btn" class="popup-close-btn">✕</button>
         </div>
     </div>
     {% endif %}
     
     {% if session.get("role") %}
     <!-- Float Buttons -->
-    <div class="float-buttons">
-        <button id="chat-toggle-btn" class="float-btn chat-btn" title="Support Chat">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-        </button>
-        {% if session.get("role") == "customer" %}
+    {% if session.get("role") == "customer" %}
+        <div class="float-buttons float-left">
+            <button id="chat-toggle-btn" class="float-btn chat-btn" title="Support Chat">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="float-buttons float-right">
             <button id="cart-toggle-btn" class="float-btn cart-btn" title="Shopping Cart">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="9" cy="21" r="1"></circle>
@@ -111,13 +112,22 @@
                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
             </button>
-        {% endif %}
-    </div>
+        </div>
+    {% else %}
+        <div class="float-buttons float-left">
+            <button id="chat-toggle-btn" class="float-btn chat-btn" title="Support Chat">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </button>
+        </div>
+    {% endif %}
     {% endif %}
     
     {% block body %}{% endblock %}
     <script src="{{ url_for('static', filename='js/cart_chat_float.js') }}"></script>
     <script>
+        window.userRole = '{{ session.get("role") }}';
         window.addEventListener("load", () => {
             const menuToggle = document.querySelector(".menu-toggle");
             const navPanel = document.querySelector(".nav-panel");
