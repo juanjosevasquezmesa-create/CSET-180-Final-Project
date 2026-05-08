@@ -318,7 +318,7 @@ def seed_feedback_and_chat(session, users, products, order_items):
 
     session.add(ComplaintImage(complaint_id=complaint.complaint_id))
 
-    convo = Conversation()
+    convo = Conversation(complaint_id=complaint.complaint_id)
     session.add(convo)
     session.flush()
 

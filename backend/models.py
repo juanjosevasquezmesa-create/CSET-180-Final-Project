@@ -301,6 +301,10 @@ class Complaint(Base):
         cascade="all, delete-orphan",
     )
     messages: Mapped[list["Message"]] = relationship(back_populates="related_complaint")
+    conversation: Mapped["Conversation | None"] = relationship(
+        back_populates="complaint",
+        uselist=False,
+    )
 
 
 class ComplaintImage(Base):
@@ -323,7 +327,13 @@ class Conversation(Base):
     conversation_id: Mapped[int] = mapped_column(
         Integer, Identity(start=1), primary_key=True, autoincrement=True
     )
-
+    complaint_id: Mapped[int] = mapped_column(
+        ForeignKey("complaints.complaint_id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True
+    )
+    complaint: Mapped["Complaint"] = relationship(          back_populates="conversation",
+        uselist=False)
     participants: Mapped[list["ChatParticipant"]] = relationship(
         back_populates="conversation",
         cascade="all, delete-orphan",
