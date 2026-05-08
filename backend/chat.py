@@ -84,12 +84,12 @@ def send_message(complaint_id):
             return jsonify({"error": "Unauthorized"}), 403
         
         # Get or create conversation for this complaint
-        conversation = session_db.scalars(
-            select(Conversation)
-        ).first()
+        conversation = session_db.scalar(
+            select(Conversation).where(Conversation.complaint_id == complaint_id)
+        )
         
         if not conversation:
-            conversation = Conversation()
+            conversation = Conversation(complaint_id=complaint_id)
             session_db.add(conversation)
             session_db.flush()
             
