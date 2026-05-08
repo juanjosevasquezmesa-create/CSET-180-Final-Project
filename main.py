@@ -18,6 +18,7 @@ from backend.adminAccount import admin_account_bp
 from backend.customerAccount import customer_account_bp
 from backend.vendorAccount import vendor_account_bp
 from backend.vendorProduct import vendor_Product_bp
+from backend.customerOrders import customer_orders_bp
 
 app = Flask(__name__)
 # Now you can access variables like this:
@@ -40,6 +41,7 @@ app.register_blueprint(chat_bp)
 app.register_blueprint(vendor_account_bp)
 app.register_blueprint(admin_account_bp)
 app.register_blueprint(customer_account_bp)
+app.register_blueprint(customer_orders_bp)
 # app.register_blueprint(productAdd_bp)
 # app.register_blueprint(productDel_bp)
 # app.register_blueprint(productEdit_bp)

@@ -1,15 +1,15 @@
-from flask import Blueprint, session, redirect, url_for, flash
+from flask import Blueprint, session, redirect, url_for, flash, render_template, request
 from sqlalchemy.orm import Session
 
 from .models import CartItem, Order, OrderItem, engine
 
 
-cartToOrder_bp = Blueprint("recipt", __name__)
+cartToOrder_bp = Blueprint("receipt", __name__)
 
 
 
 # Existing products page
-@cartToOrder_bp.route("/recipt", methods=["GET"])
+@cartToOrder_bp.route("/receipt", methods=["GET"])
 def cartToOrder():
     return redirect(url_for("cartPage.view_cart"))
 
@@ -84,3 +84,45 @@ def checkout():
 
         flash("Order placed successfully!")
         return redirect(url_for("cartPage.view_cart"))
+    
+@cartToOrder_bp.route("/checkout", methods=["GET"])
+def show_checkout():
+    user_id = session.get("user_id")
+    if not user_id:
+        flash("You must be logged in to view the checkout page.")
+        return redirect(url_for("cartPage.view_cart"))
+
+    if session.get("role") != "customer":
+        flash("Only customer accounts can view the checkout page.")
+        return redirect(url_for("index.index"))
+
+    with Session(engine) as session_db:
+        cart_items = session_db.query(CartItem)\
+            .filter_by(customer_id=user_id)\
+            .all()
+        if not cart_items:
+            flash("Your cart is empty.")
+            return redirect(url_for("cartPage.view_cart"))
+        checkout_items = []
+        subtotal = 0
+
+        for item in cart_items:
+            if not item.variation or not item.variation.product:
+                continue
+
+            price = float(item.variation.product.price)
+
+            checkout_items.append({
+                "product_name": item.variation.product.model,
+                "year": item.variation.year,
+                "color": item.variation.color,
+                "quantity": item.quantity,
+                "price": price
+            })
+            subtotal += price * item.quantity
+
+    return render_template(
+        "checkout.html",
+        cart_items=checkout_items,
+        cart_total=subtotal
+    )
