@@ -581,6 +581,15 @@ a {
     z-index: 50;
 }
 
+.float-left {
+    left: 24px;
+    right: auto;
+}
+
+.float-right {
+    right: 24px;
+}
+
 .float-btn {
     width: 56px;
     height: 56px;
@@ -684,6 +693,12 @@ a {
 .popup-footer {
     padding: 12px;
     border-top: 1px solid rgba(240, 223, 187, 0.1);
+}
+
+/* Chat Popup Positioning */
+.chat-popup {
+    left: 24px;
+    right: auto;
 }
 
 /* Cart Popup*/
