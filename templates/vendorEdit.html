@@ -54,7 +54,23 @@
                         <span>Description</span>
                         <textarea name="description" rows="5">{{ product.description or '' }}</textarea>
                     </label>
-
+                    <label class="vendor-field" style="grid-column:1/-1;">
+                        <span>Vehicle Type</span>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="carType" value="supercar" required>
+                                <span>Supercar</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="carType" value="classic" required>
+                                <span>Classic</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="carType" value="motorcycle" required>
+                                <span>Motorcycle</span>
+                            </label>
+                        </div>
+                    </label>
                     <label class="field wide">
                         <span>Front Card Image</span>
                         <input type="file" name="image" accept="image/*">
