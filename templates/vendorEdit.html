@@ -54,20 +54,26 @@
                         <span>Description</span>
                         <textarea name="description" rows="5">{{ product.description or '' }}</textarea>
                     </label>
-                    <label class="vendor-field" style="grid-column:1/-1;">
+                    <label class="field wide">
                         <span>Vehicle Type</span>
-                        <div class="radio-group">
+                        <div class="radio-group" role="radiogroup" aria-label="Vehicle Type">
                             <label class="radio-option">
-                                <input type="radio" name="carType" value="supercar" required>
-                                <span>Supercar</span>
+                                <input type="radio" name="carType" value="supercar" required
+                                       {% if product.carType == "supercar" %}checked{% endif %}>
+                                <span class="radio-control" aria-hidden="true"></span>
+                                <span class="radio-label">Supercar</span>
                             </label>
                             <label class="radio-option">
-                                <input type="radio" name="carType" value="classic" required>
-                                <span>Classic</span>
+                                <input type="radio" name="carType" value="classic" required
+                                       {% if product.carType == "classic" %}checked{% endif %}>
+                                <span class="radio-control" aria-hidden="true"></span>
+                                <span class="radio-label">Classic</span>
                             </label>
                             <label class="radio-option">
-                                <input type="radio" name="carType" value="motorcycle" required>
-                                <span>Motorcycle</span>
+                                <input type="radio" name="carType" value="motorcycle" required
+                                       {% if product.carType == "motorcycle" %}checked{% endif %}>
+                                <span class="radio-control" aria-hidden="true"></span>
+                                <span class="radio-label">Motorcycle</span>
                             </label>
                         </div>
                     </label>

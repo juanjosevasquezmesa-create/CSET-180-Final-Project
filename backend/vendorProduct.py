@@ -10,6 +10,7 @@ from .models import CartItem, OrderItem, Product, ProductVariation, User,  engin
 
 ALLOWED_IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "webp", "gif"}
 IMAGE_UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "..", "static", "images", "products")
+ALLOWED_CAR_TYPES = {"supercar", "classic", "motorcycle"}
 os.makedirs(IMAGE_UPLOAD_FOLDER, exist_ok=True)
 
 def _allowed_image(image_file):
@@ -83,6 +84,15 @@ def _parse_stock(stock_text):
 
     return stock
 
+
+def _parse_car_type(car_type):
+    car_type = car_type.strip()
+    if car_type not in ALLOWED_CAR_TYPES:
+        return None
+
+    return car_type
+
+
 def _get_vendor_product(session_db, product_id):
     productUser = session_db.scalars(
         select(User.user_id)
@@ -125,9 +135,10 @@ def productAdd():
     description = request.form.get("description", "").strip() or None
     warranty_period = request.form.get("warranty_period", "").strip() or None
     price_text = request.form.get("price", "").strip()
+    car_type = _parse_car_type(request.form.get("carType", ""))
 
-    if not model or not price_text:
-        flash("Model and price are required.", "error")
+    if not model or not price_text or car_type is None:
+        flash("Model, price, and vehicle type are required.", "error")
         return render_template("vendorAdd.html"), 400
 
     price = _parse_price(price_text)
@@ -166,6 +177,7 @@ def productAdd():
             description=description,
             warranty_period=warranty_period,
             price=price,
+            carType=car_type,
             created_by=session.get("user_id"),
             variations=variations,
         )
@@ -243,9 +255,10 @@ def productEdit(product_id):
         description = _clean_text(request.form.get("description", ""))
         warranty_period = _clean_text(request.form.get("warranty_period", ""))
         price_text = request.form.get("price", "").strip()
+        car_type = _parse_car_type(request.form.get("carType", ""))
 
-        if not model or not price_text:
-            flash("Model and price are required.", "error")
+        if not model or not price_text or car_type is None:
+            flash("Model, price, and vehicle type are required.", "error")
             return render_template("vendorEdit.html", product=product), 400
 
         price = _parse_price(price_text)
@@ -257,6 +270,7 @@ def productEdit(product_id):
         product.description = description
         product.warranty_period = warranty_period
         product.price = price
+        product.carType = car_type
 
         selected_variation_ids = set(request.form.getlist("selected_variations"))
 

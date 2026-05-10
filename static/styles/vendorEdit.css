@@ -145,6 +145,87 @@
 
 .field input::placeholder { color: rgba(247, 241, 230, 0.3); }
 
+.radio-group {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.radio-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(247, 241, 230, 0.78);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.radio-option:hover {
+    border-color: rgba(240, 223, 187, 0.32);
+    background: rgba(240, 223, 187, 0.06);
+    color: #f7f1e6;
+}
+
+.radio-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.radio-control {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(247, 241, 230, 0.42);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+.radio-control::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #151311;
+    transform: scale(0);
+    transition: transform 0.2s ease;
+}
+
+.field .radio-label {
+    color: inherit;
+    font-size: 0.86rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.radio-option:has(input[type="radio"]:checked) {
+    border-color: rgba(240, 223, 187, 0.62);
+    background: linear-gradient(135deg, rgba(240, 223, 187, 0.18), rgba(207, 179, 124, 0.08));
+    color: #f0dfbb;
+}
+
+.radio-option:has(input[type="radio"]:checked) .radio-control {
+    border-color: #cfb37c;
+    background: #cfb37c;
+}
+
+.radio-option:has(input[type="radio"]:checked) .radio-control::after {
+    transform: scale(1);
+}
+
+.radio-option:has(input[type="radio"]:focus-visible) {
+    outline: 2px solid rgba(240, 223, 187, 0.75);
+    outline-offset: 3px;
+}
+
 /* ── Variation rows ── */
 
 .variation-list { display: grid; gap: 14px; }
@@ -232,6 +313,7 @@
     .edit-page { padding: 132px 18px 56px; }
 
     .form-grid,
+    .radio-group,
     .variation-row,
     .variation-row.new-row {
         grid-template-columns: 1fr 1fr;
@@ -257,6 +339,7 @@
     .form-actions .btn { width: 100%; }
 
     .form-grid,
+    .radio-group,
     .variation-row,
     .variation-row.new-row {
         grid-template-columns: 1fr;
