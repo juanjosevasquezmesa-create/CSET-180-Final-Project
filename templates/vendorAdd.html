@@ -50,18 +50,21 @@
                     </div>
                     <label class="vendor-field" style="grid-column:1/-1;">
                         <span>Vehicle Type</span>
-                        <div class="radio-group">
+                        <div class="radio-group" role="radiogroup" aria-label="Vehicle Type">
                             <label class="radio-option">
                                 <input type="radio" name="carType" value="supercar" required>
-                                <span>Supercar</span>
+                                <span class="radio-control" aria-hidden="true"></span>
+                                <span class="radio-label">Supercar</span>
                             </label>
                             <label class="radio-option">
                                 <input type="radio" name="carType" value="classic" required>
-                                <span>Classic</span>
+                                <span class="radio-control" aria-hidden="true"></span>
+                                <span class="radio-label">Classic</span>
                             </label>
                             <label class="radio-option">
                                 <input type="radio" name="carType" value="motorcycle" required>
-                                <span>Motorcycle</span>
+                                <span class="radio-control" aria-hidden="true"></span>
+                                <span class="radio-label">Motorcycle</span>
                             </label>
                         </div>
                     </label>
