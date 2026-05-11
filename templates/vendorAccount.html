@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/vendor.css') }}">
 {% endblock %}
 
-{% block title %}Vendor Account | Lux Auto{% endblock %}
+{% block title %}Vendor Account | LuxeMotor{% endblock %}
 
 {% block body %}
 <main class="vendor-page">
@@ -99,7 +99,7 @@
             {% else %}
                 <div class="empty-vendor-state">
                     <h2>No products yet</h2>
-                    <p>Add your first vehicle listing to start building your inventory on Lux Auto.</p>
+                    <p>Add your first vehicle listing to start building your inventory on LuxeMotor.</p>
                     <a class="vendor-add-btn" href="{{ url_for('vendorProduct.productAdd') }}"
                        style="width:fit-content;margin:0 auto;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
