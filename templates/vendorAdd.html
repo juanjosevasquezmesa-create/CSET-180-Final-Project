@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/vendor.css') }}">
 {% endblock %}
 
-{% block title %}Add Product | Lux Auto{% endblock %}
+{% block title %}Add Product | LuxeMotor{% endblock %}
 
 {% block body %}
     <main class="vendor-page">
@@ -68,9 +68,16 @@
                             </label>
                         </div>
                     </label>
-                    <label class="vendor-field" style="grid-column:1/-1;">
+                    <label class="vendor-field image-upload-field" style="grid-column:1/-1;">
                         <span>Front Card Image</span>
                         <input type="file" name="image" accept="image/*">
+                        <span class="image-upload-box">
+                            <span class="image-upload-icon" aria-hidden="true">+</span>
+                            <span class="image-upload-copy">
+                                <strong>Choose product image</strong>
+                                <small>JPG, PNG, WebP, or GIF</small>
+                            </span>
+                        </span>
                     </label>
                 </section>
 
@@ -108,6 +115,7 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="{{ url_for('static', filename='js/vendor_add_image_preview.js') }}"></script>
     <script>
         const addButton = document.getElementById("add-variation");
         const variationList = document.getElementById("variation-list");

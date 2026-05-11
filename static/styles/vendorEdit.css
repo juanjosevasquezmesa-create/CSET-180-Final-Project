@@ -145,6 +145,119 @@
 
 .field input::placeholder { color: rgba(247, 241, 230, 0.3); }
 
+.image-upload-field {
+    cursor: pointer;
+}
+
+.image-upload-field input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.image-upload-box {
+    min-height: 116px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px;
+    border: 1px dashed rgba(240, 223, 187, 0.36);
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(240, 223, 187, 0.08), rgba(255, 255, 255, 0.03));
+    color: rgba(247, 241, 230, 0.82);
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.image-upload-field:hover .image-upload-box,
+.image-upload-field:focus-within .image-upload-box {
+    border-color: rgba(240, 223, 187, 0.64);
+    background: linear-gradient(135deg, rgba(240, 223, 187, 0.14), rgba(255, 255, 255, 0.05));
+}
+
+.image-upload-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: rgba(207, 179, 124, 0.18);
+    color: #f0dfbb;
+    font-size: 1.7rem;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.field .image-upload-copy,
+.field .image-upload-copy strong,
+.field .image-upload-copy small {
+    color: inherit;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.image-upload-copy {
+    display: grid;
+    gap: 4px;
+}
+
+.image-upload-copy strong {
+    font-size: 0.98rem;
+    font-weight: 800;
+}
+
+.image-upload-copy small {
+    color: rgba(247, 241, 230, 0.48);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.vendor-image-preview {
+    display: none;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.18);
+}
+
+.vendor-image-preview.is-visible {
+    display: grid;
+    justify-items: start;
+}
+
+.vendor-preview-img {
+    width: min(100%, 280px);
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid rgba(240, 223, 187, 0.2);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+.vendor-remove-img-btn {
+    min-height: 38px;
+    border: 1px solid rgba(255, 107, 107, 0.26);
+    border-radius: 10px;
+    background: rgba(255, 107, 107, 0.08);
+    color: #ffb0b0;
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 800;
+    cursor: pointer;
+    padding: 8px 13px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.vendor-remove-img-btn:hover {
+    border-color: rgba(255, 107, 107, 0.44);
+    background: rgba(255, 107, 107, 0.14);
+}
+
 .radio-group {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

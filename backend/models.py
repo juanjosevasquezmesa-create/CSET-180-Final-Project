@@ -391,3 +391,24 @@ class Message(Base):
 
 
 Base.metadata.create_all(engine)
+
+# --- Ensure at least one admin user exists ---
+from sqlalchemy.orm import sessionmaker
+
+def ensure_admin_exists():
+    SessionLocal = sessionmaker(bind=engine)
+    with SessionLocal() as session:
+        admin_exists = session.query(User).filter_by(role="admin").first()
+        if not admin_exists:
+            admin_user = User(
+                name="Admin User",
+                email="admin@luxemotor.com",
+                username="admin",
+                password=generate_password_hash("246850"),
+                role="admin",
+                isVerified="verified",
+            )
+            session.add(admin_user)
+            session.commit()
+
+ensure_admin_exists()
