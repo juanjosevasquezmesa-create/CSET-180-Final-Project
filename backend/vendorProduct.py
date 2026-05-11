@@ -46,6 +46,18 @@ def _save_product_image(product_id, image):
     image.save(filepath)
     return filename
 
+
+def _get_product_image_url(product_id):
+    for ext in ALLOWED_IMAGE_EXTENSIONS:
+        filename = f"product_{product_id}.{ext}"
+        filepath = os.path.join(IMAGE_UPLOAD_FOLDER, filename)
+        if os.path.exists(filepath):
+            image_url = url_for("static", filename=f"images/products/{filename}")
+            return f"{image_url}?v={int(os.path.getmtime(filepath))}"
+
+    return None
+
+
 vendor_Product_bp = Blueprint("vendorProduct", __name__, url_prefix="/account/vendor/")
 
 
@@ -247,9 +259,14 @@ def productEdit(product_id):
 
     with Session(engine) as session_db:
         product = _get_vendor_product(session_db, product_id)
+        current_image_url = _get_product_image_url(product.product_id)
 
         if request.method == "GET":
-            return render_template("vendorEdit.html", product=product)
+            return render_template(
+                "vendorEdit.html",
+                product=product,
+                current_image_url=current_image_url,
+            )
 
         model = request.form.get("model", "").strip()
         description = _clean_text(request.form.get("description", ""))
@@ -259,12 +276,20 @@ def productEdit(product_id):
 
         if not model or not price_text or car_type is None:
             flash("Model, price, and vehicle type are required.", "error")
-            return render_template("vendorEdit.html", product=product), 400
+            return render_template(
+                "vendorEdit.html",
+                product=product,
+                current_image_url=current_image_url,
+            ), 400
 
         price = _parse_price(price_text)
         if price is None:
             flash("Price must be a valid non-negative number.", "error")
-            return render_template("vendorEdit.html", product=product), 400
+            return render_template(
+                "vendorEdit.html",
+                product=product,
+                current_image_url=current_image_url,
+            ), 400
 
         product.model = model
         product.description = description
@@ -297,12 +322,20 @@ def productEdit(product_id):
 
             if not color or not year or not stock_text:
                 flash("Selected variations need color, year, and stock.", "error")
-                return render_template("vendorEdit.html", product=product), 400
+                return render_template(
+                    "vendorEdit.html",
+                    product=product,
+                    current_image_url=current_image_url,
+                ), 400
 
             stock = _parse_stock(stock_text)
             if stock is None:
                 flash("Variation stock must be a non-negative whole number.", "error")
-                return render_template("vendorEdit.html", product=product), 400
+                return render_template(
+                    "vendorEdit.html",
+                    product=product,
+                    current_image_url=current_image_url,
+                ), 400
 
             variation.color = color
             variation.year = year
@@ -322,12 +355,20 @@ def productEdit(product_id):
 
             if not color or not year or not stock_text:
                 flash("New variations need color, year, and stock.", "error")
-                return render_template("vendorEdit.html", product=product), 400
+                return render_template(
+                    "vendorEdit.html",
+                    product=product,
+                    current_image_url=current_image_url,
+                ), 400
 
             stock = _parse_stock(stock_text)
             if stock is None:
                 flash("New variation stock must be a non-negative whole number.", "error")
-                return render_template("vendorEdit.html", product=product), 400
+                return render_template(
+                    "vendorEdit.html",
+                    product=product,
+                    current_image_url=current_image_url,
+                ), 400
 
             session_db.add(
                 ProductVariation(
@@ -344,7 +385,11 @@ def productEdit(product_id):
             if not saved_filename:
                 session_db.rollback()
                 flash("Upload must be a valid image file (jpg, jpeg, png, webp, gif).", "error")
-                return render_template("vendorEdit.html", product=product), 400
+                return render_template(
+                    "vendorEdit.html",
+                    product=product,
+                    current_image_url=current_image_url,
+                ), 400
 
         session_db.commit()
         flash("Product updated successfully.", "success")

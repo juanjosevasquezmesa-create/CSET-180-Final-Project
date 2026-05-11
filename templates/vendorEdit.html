@@ -77,9 +77,17 @@
                             </label>
                         </div>
                     </label>
-                    <label class="field wide">
+                    <label class="field wide image-upload-field">
                         <span>Front Card Image</span>
-                        <input type="file" name="image" accept="image/*">
+                        <input type="file" name="image" accept="image/*"
+                               {% if current_image_url %}data-current-image="{{ current_image_url }}"{% endif %}>
+                        <span class="image-upload-box">
+                            <span class="image-upload-icon" aria-hidden="true">+</span>
+                            <span class="image-upload-copy">
+                                <strong>Choose product image</strong>
+                                <small>JPG, PNG, WebP, or GIF</small>
+                            </span>
+                        </span>
                     </label>
                 </div>
             </section>
@@ -137,6 +145,7 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="{{ url_for('static', filename='js/vendor_add_image_preview.js') }}"></script>
     <script>
         const addButton = document.getElementById("add-variation");
         const variationList = document.getElementById("variation-list");
