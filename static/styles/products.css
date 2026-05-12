@@ -568,7 +568,7 @@ body, html { overscroll-behavior-y: contain; }
 .variant-choice-list {
     display: grid;
     gap: 8px;
-    max-height: 112px;
+    max-height: 132px;
     min-height: 0;
     overflow-y: auto;
     padding-right: 6px;
@@ -600,11 +600,12 @@ body, html { overscroll-behavior-y: contain; }
 
 .variant-choice {
     position: relative;
-    min-height: 48px;
+    min-height: 58px;
     display: grid;
-    align-content: space-between;
-    gap: 2px;
-    padding: 8px 10px;
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-content: stretch;
+    gap: 4px;
+    padding: 8px 34px 8px 10px;
     border: 1px solid rgba(255, 255, 255, 0.11);
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.045);
@@ -633,7 +634,8 @@ body, html { overscroll-behavior-y: contain; }
     grid-column: 1 / -1;
     position: absolute;
     right: 10px;
-    top: 9px;
+    top: 50%;
+    transform: translateY(-50%);
     transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -660,27 +662,36 @@ body, html { overscroll-behavior-y: contain; }
 
 .variant-choice-main {
     display: grid;
-    gap: 1px;
+    gap: 2px;
+    min-width: 0;
 }
 
 .variant-choice-main strong {
     color: #f0dfbb;
     font-size: 0.82rem;
+    line-height: 1.05;
 }
 
 .variant-choice-main span {
     color: rgba(247, 241, 230, 0.78);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
+    line-height: 1.05;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .variant-stock {
-    padding-right: 22px;
     color: rgba(247, 241, 230, 0.56);
-    font-size: 0.64rem;
+    font-size: 0.62rem;
     font-weight: 800;
+    line-height: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
 }
 
 .empty-state {
