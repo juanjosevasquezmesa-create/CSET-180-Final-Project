@@ -28,11 +28,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    document.querySelectorAll('.add-cart-btn').forEach(button => {
+    document.querySelectorAll('button.add-cart-btn').forEach(button => {
         button.addEventListener('click', async function() {
-            const variationId = this.dataset.variationId;
+            const productCard = this.closest('.car-card');
+            const selectedVariation = productCard ? productCard.querySelector('input[name^="variation_"]:checked') : null;
+            const variationId = this.dataset.variationId || (selectedVariation ? selectedVariation.value : null);
 
             if (!variationId || this.disabled) {
+                if (!variationId) {
+                    const originalText = this.textContent;
+                    this.textContent = 'Choose an option';
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                    }, 1400);
+                }
                 return;
             }
 
