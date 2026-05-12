@@ -227,22 +227,195 @@ def seed_products(session: Session, users: dict[str, User]) -> dict[str, Product
 
 def seed_variations(session: Session, products: dict[str, Product]) -> dict[str, ProductVariation]:
     variations = {
+        # ── Lamborghini Aventador ──────────────────────────────────────────────
         "aventador_black_2024": ProductVariation(
             product_id=products["lamborghini_aventador"].product_id,
             color="Black",
             year="2024",
             stock=2,
         ),
+        "aventador_white_2024": ProductVariation(
+            product_id=products["lamborghini_aventador"].product_id,
+            color="White",
+            year="2024",
+            stock=1,
+        ),
+        "aventador_red_2023": ProductVariation(
+            product_id=products["lamborghini_aventador"].product_id,
+            color="Rosso Mars Red",
+            year="2023",
+            stock=3,
+        ),
+        "aventador_orange_2023": ProductVariation(
+            product_id=products["lamborghini_aventador"].product_id,
+            color="Arancio Argos Orange",
+            year="2023",
+            stock=1,
+        ),
+
+        # ── Lamborghini Huracán EVO ────────────────────────────────────────────
         "huracan_yellow_2024": ProductVariation(
             product_id=products["lamborghini_huracan"].product_id,
             color="Yellow",
             year="2024",
             stock=2,
         ),
+        "huracan_blue_2024": ProductVariation(
+            product_id=products["lamborghini_huracan"].product_id,
+            color="Blu Cepheus Blue",
+            year="2024",
+            stock=2,
+        ),
+        "huracan_green_2023": ProductVariation(
+            product_id=products["lamborghini_huracan"].product_id,
+            color="Verde Mantis Green",
+            year="2023",
+            stock=1,
+        ),
+        "huracan_silver_2022": ProductVariation(
+            product_id=products["lamborghini_huracan"].product_id,
+            color="Grigio Lynx Silver",
+            year="2022",
+            stock=4,
+        ),
+
+        # ── Lamborghini Revuelto ───────────────────────────────────────────────
+        "revuelto_white_2025": ProductVariation(
+            product_id=products["lamborghini_revuelto"].product_id,
+            color="Bianco Monocerus White",
+            year="2025",
+            stock=1,
+        ),
+        "revuelto_black_2025": ProductVariation(
+            product_id=products["lamborghini_revuelto"].product_id,
+            color="Nero Noctis Black",
+            year="2025",
+            stock=2,
+        ),
+        "revuelto_orange_2024": ProductVariation(
+            product_id=products["lamborghini_revuelto"].product_id,
+            color="Arancio Xanto Orange",
+            year="2024",
+            stock=1,
+        ),
+
+        # ── 1967 Corvette Stingray ─────────────────────────────────────────────
+        "stingray67_red_1967": ProductVariation(
+            product_id=products["corvette_stingray_1967"].product_id,
+            color="Rally Red",
+            year="1967",
+            stock=1,
+        ),
+        "stingray67_black_1967": ProductVariation(
+            product_id=products["corvette_stingray_1967"].product_id,
+            color="Tuxedo Black",
+            year="1967",
+            stock=2,
+        ),
+        "stingray67_silver_1967": ProductVariation(
+            product_id=products["corvette_stingray_1967"].product_id,
+            color="Silverstone Silver",
+            year="1967",
+            stock=1,
+        ),
+
+        # ── 1958 Corvette C1 ──────────────────────────────────────────────────
+        "c1_red_1958": ProductVariation(
+            product_id=products["corvette_c1_1958"].product_id,
+            color="Signet Red",
+            year="1958",
+            stock=1,
+        ),
+        "c1_white_1958": ProductVariation(
+            product_id=products["corvette_c1_1958"].product_id,
+            color="Snowcrest White",
+            year="1958",
+            stock=2,
+        ),
+        "c1_blue_1958": ProductVariation(
+            product_id=products["corvette_c1_1958"].product_id,
+            color="Panama Yellow",  # period-correct alternate
+            year="1958",
+            stock=1,
+        ),
+
+        # ── 1970 Corvette C3 ──────────────────────────────────────────────────
+        "c3_orange_1970": ProductVariation(
+            product_id=products["corvette_c3_1970"].product_id,
+            color="Bridgehampton Blue",
+            year="1970",
+            stock=2,
+        ),
+        "c3_green_1970": ProductVariation(
+            product_id=products["corvette_c3_1970"].product_id,
+            color="Fathom Green",
+            year="1970",
+            stock=1,
+        ),
+        "c3_yellow_1970": ProductVariation(
+            product_id=products["corvette_c3_1970"].product_id,
+            color="Classic White",
+            year="1970",
+            stock=3,
+        ),
+
+        # ── Vyrus 987 C3 4V ───────────────────────────────────────────────────
         "vyrus987_black_2024": ProductVariation(
             product_id=products["vyrus_987_c3"].product_id,
             color="Black",
             year="2024",
+            stock=2,
+        ),
+        "vyrus987_carbon_2024": ProductVariation(
+            product_id=products["vyrus_987_c3"].product_id,
+            color="Raw Carbon",
+            year="2024",
+            stock=1,
+        ),
+        "vyrus987_red_2023": ProductVariation(
+            product_id=products["vyrus_987_c3"].product_id,
+            color="Racing Red",
+            year="2023",
+            stock=2,
+        ),
+
+        # ── Vyrus 986 M2 ──────────────────────────────────────────────────────
+        "vyrus986_black_2024": ProductVariation(
+            product_id=products["vyrus_986_m2"].product_id,
+            color="Matte Black",
+            year="2024",
+            stock=2,
+        ),
+        "vyrus986_silver_2024": ProductVariation(
+            product_id=products["vyrus_986_m2"].product_id,
+            color="Titanium Silver",
+            year="2024",
+            stock=1,
+        ),
+        "vyrus986_carbon_2023": ProductVariation(
+            product_id=products["vyrus_986_m2"].product_id,
+            color="Raw Carbon",
+            year="2023",
+            stock=3,
+        ),
+
+        # ── Vyrus 984 C3 ──────────────────────────────────────────────────────
+        "vyrus984_white_2024": ProductVariation(
+            product_id=products["vyrus_984_c3"].product_id,
+            color="Pearl White",
+            year="2024",
+            stock=2,
+        ),
+        "vyrus984_black_2024": ProductVariation(
+            product_id=products["vyrus_984_c3"].product_id,
+            color="Gloss Black",
+            year="2024",
+            stock=1,
+        ),
+        "vyrus984_red_2023": ProductVariation(
+            product_id=products["vyrus_984_c3"].product_id,
+            color="Racing Red",
+            year="2023",
             stock=2,
         ),
     }
