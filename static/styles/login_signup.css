@@ -37,6 +37,13 @@ a {
 .auth-page {
     min-height: 100vh;
     padding: 140px 24px 48px;
+    background:
+        linear-gradient(180deg, rgba(8, 8, 7, 0.42) 0%, rgba(8, 8, 7, 0.74) 100%),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.08) 52%, rgba(0, 0, 0, 0.46) 100%),
+        url("../images/image_w1050_h572_luxury_car_bg.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .auth-shell {
